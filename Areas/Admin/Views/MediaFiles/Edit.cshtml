@@ -10,99 +10,23 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Data" class="control-label"></label>
-                <input asp-for="Data" class="form-control" />
-                <span asp-validation-for="Data" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContentType" class="control-label"></label>
-                <input asp-for="ContentType" class="form-control" />
-                <span asp-validation-for="ContentType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MovieId" class="control-label"></label>
-                <select asp-for="MovieId" class="form-control" asp-items="ViewBag.MovieId"></select>
-                <span asp-validation-for="MovieId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ActorId" class="control-label"></label>
-                <input asp-for="ActorId" class="form-control" />
-                <span asp-validation-for="ActorId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TVShowId" class="control-label"></label>
-                <select asp-for="TVShowId" class="form-control" asp-items="ViewBag.TVShowId"></select>
-                <span asp-validation-for="TVShowId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EpisodeId" class="control-label"></label>
-                <select asp-for="EpisodeId" class="form-control" asp-items="ViewBag.EpisodeId"></select>
-                <span asp-validation-for="EpisodeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AwardId" class="control-label"></label>
-                <input asp-for="AwardId" class="form-control" />
-                <span asp-validation-for="AwardId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GenreId" class="control-label"></label>
-                <select asp-for="GenreId" class="form-control" asp-items="ViewBag.GenreId"></select>
-                <span asp-validation-for="GenreId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MovieSeriesId" class="control-label"></label>
-                <select asp-for="MovieSeriesId" class="form-control" asp-items="ViewBag.MovieSeriesId"></select>
-                <span asp-validation-for="MovieSeriesId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MovieStudioId" class="control-label"></label>
-                <select asp-for="MovieStudioId" class="form-control" asp-items="ViewBag.MovieStudioId"></select>
-                <span asp-validation-for="MovieStudioId" class="text-danger"></span>
-            </div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Edited" class="control-label"></label>
-                <input asp-for="Edited" class="form-control" />
-                <span asp-validation-for="Edited" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Deleted" /> @Html.DisplayNameFor(model => model.Deleted)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Recommended" /> @Html.DisplayNameFor(model => model.Recommended)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Language" class="control-label"></label>
-                <input asp-for="Language" class="form-control" />
-                <span asp-validation-for="Language" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Website" class="control-label"></label>
-                <input asp-for="Website" class="form-control" />
-                <span asp-validation-for="Website" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="ContentType" />
+            <input type="hidden" asp-for="Data" />
+
+            @if (Model.Data != null)
+            {
+                <div class="row mt-3">
+                    <div class="col">
+                        <img class="img-fluid" src="data:@Model.ContentType;base64, @Convert.ToBase64String(Model.Data)" alt="Document" />
+                    </div>
+                </div>
+            }
+
+            @Html.EditorForModel()
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -115,5 +39,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }

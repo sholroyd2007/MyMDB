@@ -7,7 +7,7 @@
         public string ContentType { get; set; }
 
         public int? MovieId { get; set; }
-        public int? ActorId { get; set; }
+        public int? CastCrewMemberId { get; set; }
         public int? TVShowId { get; set; }
         public int? EpisodeId { get; set; }
         public int? AwardId { get; set; }

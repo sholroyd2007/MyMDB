@@ -17,6 +17,7 @@ namespace MyMDB.Data
         public DbSet<Award> Awards { get; set; }
         public DbSet<AwardCategory> AwardCategories { get; set; }
         public DbSet<AwardRecipient> ActorAwards { get; set; }
+        public DbSet<AwardRecipient> AwardRecipients { get; set; }
         public DbSet<Episode> Episodes { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Movie> Movies { get; set; }

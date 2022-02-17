@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDd;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -55,10 +56,18 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Data,ContentType,MovieId,ActorId,TVShowId,EpisodeId,AwardId,GenreId,MovieSeriesId,MovieStudioId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] MediaFile mediaFile)
+        public async Task<IActionResult> Create(MediaFile mediaFile)
         {
             if (ModelState.IsValid)
             {
+                var file = HttpContext.Request.Form.Files.FirstOrDefault();
+                if (file != null)
+                {
+                    mediaFile.Data = file.OpenReadStream().ReadFully();
+                    mediaFile.ContentType = file.ContentType;
+                    mediaFile.Created = DateTime.Now.ToLocalTime();
+                }
+
                 _context.Add(mediaFile);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -87,7 +96,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Data,ContentType,MovieId,ActorId,TVShowId,EpisodeId,AwardId,GenreId,MovieSeriesId,MovieStudioId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] MediaFile mediaFile)
+        public async Task<IActionResult> Edit(int id, MediaFile mediaFile)
         {
             if (id != mediaFile.Id)
             {
@@ -98,6 +107,15 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    var file = HttpContext.Request.Form.Files.FirstOrDefault();
+                    if (file != null)
+                    {
+                        mediaFile.Data = file.OpenReadStream().ReadFully();
+                        mediaFile.ContentType = file.ContentType;
+                        
+                    }
+
+                    mediaFile.Edited = DateTime.Now.ToLocalTime();
                     _context.Update(mediaFile);
                     await _context.SaveChangesAsync();
                 }

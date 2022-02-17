@@ -27,6 +27,6 @@ namespace MyMDB.Models
 
         public string Website { get; set; }
 
-        public IEnumerable<Award> Awards { get; set; }
+        public IEnumerable<AwardRecipient> AwardRecipients { get; set; }
     }
 }

@@ -36,6 +36,7 @@ namespace MyMDB
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
 
             services.AddTransient<IMyMDBService, MyMDBService>();
             services.AddTransient<MyMDBService>();

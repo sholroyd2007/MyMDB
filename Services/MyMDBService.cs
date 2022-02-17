@@ -12,8 +12,22 @@ namespace MyMDB.Services
     {
         Task<Movie> GetMovieById(int id);
         Task<TVShow> GetTVShowById(int id);
+        Task<CastCrewMember> GetCastCrewMemberById(int id);
+        Task<Episode> GetEpisodeById(int id);
+        Task<Award> GetAwardById(int id);
+        Task<AwardCategory> GetAwardCategoryById(int id);
+        Task<AwardRecipient> GetAwardRecipientById(int id);
+        Task<Genre> GetGenreById(int id);
+        Task<MovieSeries> GetMovieSeriesById(int id);
+        Task<MovieStudio> GetMovieStudioById(int id);
         Task<IEnumerable<Movie>> GetAllMovies();
         Task<IEnumerable<TVShow>> GetAllTVShows();
+        Task<IEnumerable<Episode>> GetAllEpisodes();
+        Task<IEnumerable<Award>> GetAllAwards();
+        Task<IEnumerable<Genre>> GetAllGenres();
+        Task<IEnumerable<MovieSeries>> GetAllMovieSeries();
+        Task<IEnumerable<MovieStudio>> GetAllMovieStudios();
+        Task<IEnumerable<CastCrewMember>> GetAllCastCrewMembers();
         Task<IEnumerable<ProductionRole>> GetProductionRolesByCastCrewMemberId(int id);
         Task<IEnumerable<CastCrewMember>> GetCastCrewMembersByMovieId(int id);
         Task<IEnumerable<Movie>> GetMoviesByGenre(int id);
@@ -47,6 +61,10 @@ namespace MyMDB.Services
                 .Include(e => e.Facts)
                 .Include(e => e.MediaFiles)
                 .Include(e=>e.MovieStudio)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
                 .ToListAsync();
             return movies;
         }
@@ -57,6 +75,10 @@ namespace MyMDB.Services
                 .Include(e => e.CastCrewMembers)
                 .Include(e => e.Facts)
                 .Include(e => e.MediaFiles)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return movie;   
         }
@@ -73,6 +95,10 @@ namespace MyMDB.Services
                 .Include(e=>e.Character)
                 .Include(e=>e.Movie)
                 .Include(e=>e.Episode)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
                 .Where(e => e.CastCrewMemberId == castCrewMember.Id)
                 .ToListAsync();
 
@@ -134,6 +160,10 @@ namespace MyMDB.Services
                 .Include(e => e.CastCrewMembers)
                 .Include(e => e.Facts)
                 .Include(e => e.MediaFiles)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
                 .Where(e => e.MovieStudioId == id)
                 .ToListAsync();
             return movies;
@@ -162,6 +192,10 @@ namespace MyMDB.Services
                 .ThenInclude(e => e.CastCrewMembers)
                 .Include(e => e.Facts)
                 .Include(e => e.MediaFiles)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return show;
         }
@@ -174,8 +208,136 @@ namespace MyMDB.Services
                 .ThenInclude(e => e.CastCrewMembers)
                 .Include(e => e.Facts)
                 .Include(e => e.MediaFiles)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
                 .ToListAsync();
             return shows;
+        }
+
+        public async Task<IEnumerable<CastCrewMember>> GetAllCastCrewMembers()
+        {
+            var castCrewMembers = await Context.CastCrewMember
+                .AsNoTracking()
+                .Include(e => e.Facts)
+                .Include(e => e.MediaFiles)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e=>e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e=>e.AwardCategory)
+                .ToListAsync();
+            return castCrewMembers;
+        }
+
+        public async Task<IEnumerable<Episode>> GetAllEpisodes()
+        {
+            var episodes = await Context.Episodes
+                .AsNoTracking()
+                .Include(e => e.Facts)
+                .Include(e => e.MediaFiles)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
+                .ToListAsync();
+            return episodes;
+        }
+
+        public async Task<IEnumerable<Award>> GetAllAwards()
+        {
+            var awards = await Context.Awards
+                .AsNoTracking()
+                .ToListAsync();
+            return awards;
+        }
+
+        public async Task<IEnumerable<Genre>> GetAllGenres()
+        {
+            var genres = await Context.Genres
+                .AsNoTracking()
+                .ToListAsync();
+            return genres;
+        }
+
+        public async Task<IEnumerable<MovieSeries>> GetAllMovieSeries()
+        {
+            var series = await Context.MovieSeries
+                .AsNoTracking()
+                .ToListAsync();
+            return series;
+        }
+
+        public async Task<IEnumerable<MovieStudio>> GetAllMovieStudios()
+        {
+            var studios = await Context.MovieStudios
+                .AsNoTracking()
+                .ToListAsync();
+            return studios;
+        }
+
+        public async Task<CastCrewMember> GetCastCrewMemberById(int id)
+        {
+            var x = await Context.CastCrewMember
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e=>e.Id == id);
+            return x;
+        }
+
+        public async Task<Episode> GetEpisodeById(int id)
+        {
+            var x = await Context.Episodes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return x;
+        }
+
+        public async Task<Award> GetAwardById(int id)
+        {
+            var x = await Context.Awards
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return x;
+        }
+
+        public async Task<AwardCategory> GetAwardCategoryById(int id)
+        {
+            var x = await Context.AwardCategories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return x;
+        }
+
+        public async Task<AwardRecipient> GetAwardRecipientById(int id)
+        {
+            var x = await Context.AwardRecipients
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return x;
+        }
+
+        public async Task<Genre> GetGenreById(int id)
+        {
+            var x = await Context.Genres
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return x;
+        }
+
+        public async Task<MovieSeries> GetMovieSeriesById(int id)
+        {
+            var x = await Context.MovieSeries
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return x;
+        }
+
+        public async Task<MovieStudio> GetMovieStudioById(int id)
+        {
+            var x = await Context.MovieStudios
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return x;
         }
     }
 }

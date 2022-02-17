@@ -9,86 +9,79 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table" id="mymdb-datatable">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Data)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContentType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ActorId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AwardId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Edited)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Deleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Recommended)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Language)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Website)
-            </th>
+            <th></th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Linked Elements</th>
+            <th>Created</th>
+            <th>Edited</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            
             <td>
-                @Html.DisplayFor(modelItem => item.Data)
+                @item.Id
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ContentType)
+                @item.Name
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ActorId)
+                @item.ContentType
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AwardId)
+                | 
+                    @if (item.MovieId != null)
+                    {
+                        var movie = await MyMDBService.GetMovieById(item.MovieId.Value);
+                        <text>@movie.Name |</text>
+                    }
+                    @if (item.CastCrewMemberId != null)
+                    {
+                        var member = await MyMDBService.GetCastCrewMemberById(item.CastCrewMemberId.Value);
+                        <text>@member.Name |</text>
+                    }
+                    @if (item.TVShowId != null)
+                    {
+                        var show = await MyMDBService.GetTVShowById(item.TVShowId.Value);
+                        <text>@show.Name |</text>
+                    }
+                    @if (item.EpisodeId != null)
+                    {
+                        var episode = await MyMDBService.GetEpisodeById(item.EpisodeId.Value);
+                        <text>@episode.Name |</text>
+                    }
+                    @if (item.AwardId != null)
+                    {
+                        var award = await MyMDBService.GetAwardById(item.AwardId.Value);
+                        <text>@award.Name |</text>
+                    }
+                    @if (item.GenreId != null)
+                    {
+                        var genre = await MyMDBService.GetGenreById(item.GenreId.Value);
+                        <text>@genre.Name |</text>
+                    }
+                    @if (item.MovieSeriesId != null)
+                    {
+                        var series = await MyMDBService.GetMovieSeriesById(item.MovieSeriesId.Value);
+                        <text>@series.Name |</text>
+                    }
+                    @if (item.MovieStudioId != null)
+                    {
+                        var studio = await MyMDBService.GetMovieStudioById(item.MovieStudioId.Value);
+                        <text>@studio.Name |</text>
+                    }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @item.Created
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Created)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Edited)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Recommended)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Language)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Website)
+                @item.Edited
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
