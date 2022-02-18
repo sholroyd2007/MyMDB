@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public FactTypesController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public FactTypesController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/FactTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.FactTypes.ToListAsync());
+            return View(await MyMDBService.GetAllFactTypes());
         }
 
         // GET: Admin/FactTypes/Details/5
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var factType = await _context.FactTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var factType = await MyMDBService.GetFactTypeById(id.Value);
             if (factType == null)
             {
                 return NotFound();
@@ -59,6 +63,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                factType.Created = DateTime.Now.ToLocalTime();
                 _context.Add(factType);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -74,7 +79,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var factType = await _context.FactTypes.FindAsync(id);
+            var factType = await MyMDBService.GetFactTypeById(id.Value);
             if (factType == null)
             {
                 return NotFound();
@@ -98,6 +103,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    factType.Edited = DateTime.Now.ToLocalTime();
                     _context.Update(factType);
                     await _context.SaveChangesAsync();
                 }
@@ -125,8 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var factType = await _context.FactTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var factType = await MyMDBService.GetFactTypeById(id.Value);
             if (factType == null)
             {
                 return NotFound();
@@ -140,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var factType = await _context.FactTypes.FindAsync(id);
+            var factType = await MyMDBService.GetFactTypeById(id);
             _context.FactTypes.Remove(factType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

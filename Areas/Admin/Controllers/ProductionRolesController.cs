@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,16 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductionRolesController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public ProductionRolesController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/ProductionRoles
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ProductionRoles.Include(p => p.Character).Include(p => p.Episode).Include(p => p.JobRole).Include(p => p.Movie);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await MyMDBService.GetAllProductionRoles());
         }
 
         // GET: Admin/ProductionRoles/Details/5
@@ -35,12 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await _context.ProductionRoles
-                .Include(p => p.Character)
-                .Include(p => p.Episode)
-                .Include(p => p.JobRole)
-                .Include(p => p.Movie)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
@@ -52,10 +51,6 @@ namespace MyMDB.Areas.Admin.Controllers
         // GET: Admin/ProductionRoles/Create
         public IActionResult Create()
         {
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Id");
-            ViewData["EpisodeId"] = new SelectList(_context.Episodes, "Id", "Id");
-            ViewData["JobRoleId"] = new SelectList(_context.JobRoles, "Id", "Id");
-            ViewData["MovieId"] = new SelectList(_context.Movies, "Id", "Id");
             return View();
         }
 
@@ -73,10 +68,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Id", productionRole.CharacterId);
-            ViewData["EpisodeId"] = new SelectList(_context.Episodes, "Id", "Id", productionRole.EpisodeId);
-            ViewData["JobRoleId"] = new SelectList(_context.JobRoles, "Id", "Id", productionRole.JobRoleId);
-            ViewData["MovieId"] = new SelectList(_context.Movies, "Id", "Id", productionRole.MovieId);
+            
             return View(productionRole);
         }
 
@@ -88,15 +80,11 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await _context.ProductionRoles.FindAsync(id);
+            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
             }
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Id", productionRole.CharacterId);
-            ViewData["EpisodeId"] = new SelectList(_context.Episodes, "Id", "Id", productionRole.EpisodeId);
-            ViewData["JobRoleId"] = new SelectList(_context.JobRoles, "Id", "Id", productionRole.JobRoleId);
-            ViewData["MovieId"] = new SelectList(_context.Movies, "Id", "Id", productionRole.MovieId);
             return View(productionRole);
         }
 
@@ -133,10 +121,6 @@ namespace MyMDB.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CharacterId"] = new SelectList(_context.Characters, "Id", "Id", productionRole.CharacterId);
-            ViewData["EpisodeId"] = new SelectList(_context.Episodes, "Id", "Id", productionRole.EpisodeId);
-            ViewData["JobRoleId"] = new SelectList(_context.JobRoles, "Id", "Id", productionRole.JobRoleId);
-            ViewData["MovieId"] = new SelectList(_context.Movies, "Id", "Id", productionRole.MovieId);
             return View(productionRole);
         }
 
@@ -148,12 +132,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await _context.ProductionRoles
-                .Include(p => p.Character)
-                .Include(p => p.Episode)
-                .Include(p => p.JobRole)
-                .Include(p => p.Movie)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
@@ -167,7 +146,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var productionRole = await _context.ProductionRoles.FindAsync(id);
+            var productionRole = await MyMDBService.GetProductionRoleById(id);
             _context.ProductionRoles.Remove(productionRole);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

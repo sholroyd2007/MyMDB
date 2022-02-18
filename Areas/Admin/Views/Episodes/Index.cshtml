@@ -39,14 +39,14 @@
                 <td>
                     @item.EpisodeNumber
                 </td>
-                 <td>
+                <td>
                     @item.Name
                 </td>
                 <td>
-                    @item.Created
+                    @item.Created.ToString("dd MMM yyyy")
                 </td>
                 <td>
-                    @item.Edited
+                    @item.Edited?.ToString("dd MMM yyyy")
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

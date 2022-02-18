@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public MovieSeriesController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public MovieSeriesController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/MovieSeries
         public async Task<IActionResult> Index()
         {
-            return View(await _context.MovieSeries.ToListAsync());
+            return View(await MyMDBService.GetAllMovieSeries());
         }
 
         // GET: Admin/MovieSeries/Details/5
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieSeries = await _context.MovieSeries
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var movieSeries = await MyMDBService.GetMovieStudioById(id.Value);
             if (movieSeries == null)
             {
                 return NotFound();
@@ -75,7 +79,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieSeries = await _context.MovieSeries.FindAsync(id);
+            var movieSeries = await MyMDBService.GetMovieSeriesById(id.Value);
             if (movieSeries == null)
             {
                 return NotFound();
@@ -127,8 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieSeries = await _context.MovieSeries
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var movieSeries = await MyMDBService.GetMovieSeriesById(id.Value);
             if (movieSeries == null)
             {
                 return NotFound();
@@ -142,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var movieSeries = await _context.MovieSeries.FindAsync(id);
+            var movieSeries = await MyMDBService.GetMovieSeriesById(id);
             _context.MovieSeries.Remove(movieSeries);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

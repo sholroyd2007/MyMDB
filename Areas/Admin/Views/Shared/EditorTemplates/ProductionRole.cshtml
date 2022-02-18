@@ -1,0 +1,62 @@
+﻿@model ProductionRole
+
+<div class="form-group">
+    <label asp-for="CastCrewMemberId">Cast/Crew Member</label>
+    <select class="form-control os-dropdown" asp-for="CastCrewMemberId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllCastCrewMembers())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="JobRoleId">Job Role</label>
+    <select class="form-control os-dropdown" asp-for="JobRoleId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllJobRoles())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="CharacterId">Character</label>
+    <select class="form-control os-dropdown" asp-for="CharacterId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllCharacters())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="MovieId">Movie</label>
+    <select class="form-control os-dropdown" asp-for="MovieId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllMovies())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="EpisodeId">Episode</label>
+    <select class="form-control os-dropdown" asp-for="EpisodeId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllEpisodes())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <input class="form-check" type="checkbox" asp-for="CreditOnly" />
+    <label class="form-check-label" asp-for="CreditOnly ">Credit Only?</label>
+</div>
+

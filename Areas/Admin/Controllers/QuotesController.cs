@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public QuotesController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public QuotesController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/Quotes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Quotes.ToListAsync());
+            return View(await MyMDBService.GetAllQuotes());
         }
 
         // GET: Admin/Quotes/Details/5
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var quote = await _context.Quotes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var quote = await MyMDBService.GetQuoteById(id.Value);
             if (quote == null)
             {
                 return NotFound();
@@ -75,7 +79,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await MyMDBService.GetQuoteById(id.Value);
             if (quote == null)
             {
                 return NotFound();
@@ -127,8 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var quote = await _context.Quotes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var quote = await MyMDBService.GetQuoteById(id.Value);
             if (quote == null)
             {
                 return NotFound();
@@ -142,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await MyMDBService.GetQuoteById(id);
             _context.Quotes.Remove(quote);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

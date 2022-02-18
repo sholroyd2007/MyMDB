@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public GenresController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public GenresController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/Genres
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Genres.ToListAsync());
+            return View(await MyMDBService.GetAllGenres());
         }
 
         // GET: Admin/Genres/Details/5
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genres
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var genre = await MyMDBService.GetGenreById(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -75,7 +79,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genres.FindAsync(id);
+            var genre = await MyMDBService.GetGenreById(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -127,8 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genres
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var genre = await MyMDBService.GetGenreById(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -142,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var genre = await _context.Genres.FindAsync(id);
+            var genre = await MyMDBService.GetGenreById(id);
             _context.Genres.Remove(genre);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

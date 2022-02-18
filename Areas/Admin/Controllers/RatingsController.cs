@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public RatingsController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public RatingsController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/Ratings
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Ratings.ToListAsync());
+            return View(await MyMDBService.GetAllRatings());
         }
 
         // GET: Admin/Ratings/Details/5
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var rating = await _context.Ratings
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var rating = await MyMDBService.GetRatingById(id.Value);
             if (rating == null)
             {
                 return NotFound();
@@ -75,7 +79,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var rating = await _context.Ratings.FindAsync(id);
+            var rating = await MyMDBService.GetRatingById(id.Value);
             if (rating == null)
             {
                 return NotFound();
@@ -127,8 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var rating = await _context.Ratings
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var rating = await MyMDBService.GetRatingById(id.Value);
             if (rating == null)
             {
                 return NotFound();
@@ -142,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var rating = await _context.Ratings.FindAsync(id);
+            var rating = await MyMDBService.GetRatingById(id);
             _context.Ratings.Remove(rating);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

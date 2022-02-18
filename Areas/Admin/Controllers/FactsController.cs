@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public FactsController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public FactsController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/Facts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Facts.ToListAsync());
+            return View(await MyMDBService.GetAllFacts());
         }
 
         // GET: Admin/Facts/Details/5
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var fact = await _context.Facts
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var fact = await MyMDBService.GetFactById(id.Value);
             if (fact == null)
             {
                 return NotFound();
@@ -59,6 +63,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                fact.Created = DateTime.Now.ToLocalTime();
                 _context.Add(fact);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -74,7 +79,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var fact = await _context.Facts.FindAsync(id);
+            var fact = await MyMDBService.GetFactById(id.Value);
             if (fact == null)
             {
                 return NotFound();
@@ -98,6 +103,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    fact.Edited = DateTime.Now.ToLocalTime();
                     _context.Update(fact);
                     await _context.SaveChangesAsync();
                 }
@@ -125,8 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var fact = await _context.Facts
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var fact = await MyMDBService.GetFactById(id.Value);
             if (fact == null)
             {
                 return NotFound();
@@ -140,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var fact = await _context.Facts.FindAsync(id);
+            var fact = await MyMDBService.GetFactById(id);
             _context.Facts.Remove(fact);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -15,7 +15,7 @@
             <th></th>
             <th>Name</th>
             <th>Type</th>
-            <th>Linked Elements</th>
+            <th>Linked To</th>
             <th>Created</th>
             <th>Edited</th>
             <th></th>
@@ -36,52 +36,21 @@
             </td>
             <td>
                 | 
-                    @if (item.MovieId != null)
-                    {
-                        var movie = await MyMDBService.GetMovieById(item.MovieId.Value);
-                        <text>@movie.Name |</text>
-                    }
-                    @if (item.CastCrewMemberId != null)
-                    {
-                        var member = await MyMDBService.GetCastCrewMemberById(item.CastCrewMemberId.Value);
-                        <text>@member.Name |</text>
-                    }
-                    @if (item.TVShowId != null)
-                    {
-                        var show = await MyMDBService.GetTVShowById(item.TVShowId.Value);
-                        <text>@show.Name |</text>
-                    }
-                    @if (item.EpisodeId != null)
-                    {
-                        var episode = await MyMDBService.GetEpisodeById(item.EpisodeId.Value);
-                        <text>@episode.Name |</text>
-                    }
-                    @if (item.AwardId != null)
-                    {
-                        var award = await MyMDBService.GetAwardById(item.AwardId.Value);
-                        <text>@award.Name |</text>
-                    }
-                    @if (item.GenreId != null)
-                    {
-                        var genre = await MyMDBService.GetGenreById(item.GenreId.Value);
-                        <text>@genre.Name |</text>
-                    }
-                    @if (item.MovieSeriesId != null)
-                    {
-                        var series = await MyMDBService.GetMovieSeriesById(item.MovieSeriesId.Value);
-                        <text>@series.Name |</text>
-                    }
-                    @if (item.MovieStudioId != null)
-                    {
-                        var studio = await MyMDBService.GetMovieStudioById(item.MovieStudioId.Value);
-                        <text>@studio.Name |</text>
-                    }
+                    @(item.MovieId != null ? $"{@item?.Movie?.Name} |" : "")
+                    @(item.CastCrewMemberId != null ? $"{@item?.CastCrewMember?.Name} |" : "")
+                    @(item.TVShowId != null ? $"{@item?.TVShow?.Name} |" : "")
+                    @(item.EpisodeId != null ? $"{@item?.Episode?.Name} |" : "")
+                    @(item.AwardId != null ? $"{@item?.Award?.Name} |" : "")
+                    @(item.GenreId != null ? $"{@item?.Genre?.Name} |" : "")
+                    @(item.MovieSeriesId != null ? $"{@item?.MovieSeries?.Name} |" : "")
+                    @(item.MovieStudioId != null ? $"{@item?.MovieStudio?.Name} |" : "")
+                    @(item.CharacterId != null ? $"{@item?.Character?.Name} |" : "")
             </td>
             <td>
-                @item.Created
+                @item.Created.ToString("dd MMM yyyy")
             </td>
             <td>
-                @item.Edited
+                @item.Edited?.ToString("dd MMM yyyy")
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

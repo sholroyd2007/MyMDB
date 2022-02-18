@@ -24,59 +24,44 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            
-            <td>
-                @item.Id
-            </td>
-            <td>
-                @item?.Award?.Name
-            </td>  
-            <td>
-                @item?.AwardCategory?.Name
-            </td>  
-            <td>
-                @if (item.MovieId != null)
-                    {
-                        var movie = await MyMDBService.GetMovieById(item.MovieId.Value);
-                        <text>@movie.Name</text>
-                    }
-                    @if (item.CastCrewMemberId != null)
-                    {
-                        var member = await MyMDBService.GetCastCrewMemberById(item.CastCrewMemberId.Value);
-                        <text>@member.Name</text>
-                    }
-                    @if (item.TVShowId != null)
-                    {
-                        var show = await MyMDBService.GetTVShowById(item.TVShowId.Value);
-                        <text>@show.Name</text>
-                    }
-                    @if (item.EpisodeId != null)
-                    {
-                        var episode = await MyMDBService.GetEpisodeById(item.EpisodeId.Value);
-                        <text>@episode.Name</text>
-                    }
-            </td>
-            <td>
-                @item.Year
-            </td>
-            <td>
-                @(item.Win == true ? "Winner" : "Nominee")
-            </td>
-            <td>
-                @item.Created
-            </td>
-            <td>
-                @item.Edited
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item?.Award?.Name
+                </td>
+                <td>
+                    @item?.AwardCategory?.Name
+                </td>
+                <td>
+                    @(item.MovieId != null ? $"{@item?.Movie?.Name}" : "")
+                    @(item.CastCrewMemberId != null ? $"{@item?.CastCrewMember?.Name}" : "")
+                    @(item.TVShowId != null ? $"{@item?.TVShow?.Name}" : "")
+                    @(item.EpisodeId != null ? $"{@item?.Episode?.Name}" : "")
+                </td>
+                <td>
+                    @item.Year
+                </td>
+                <td>
+                    @(item.Win == true ? "Winner" : "Nominee")
+                </td>
+                <td>
+                    @item.Created.ToString("dd MMM yyyy")
+                </td>
+                <td>
+                    @item.Edited?.ToString("dd MMM yyyy")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 

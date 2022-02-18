@@ -36,22 +36,14 @@
                     @item?.CastCrewMember?.Name
                 </td>
                 <td>
-                    @if (item.EpisodeId != null)
-                    {
-                        var show = await MyMDBService.GetEpisodeById(item.EpisodeId.Value);
-                        <text>@show?.TVShow?.Name</text>
-                    }
-                    @if (item.MovieId != null)
-                    {
-                        var movie = await MyMDBService.GetMovieById(item.MovieId.Value);
-                        <text>@movie.Name</text>
-                    }
+                    @(item.EpisodeId != null ? $"{@item?.Episode?.Name}" : "")
+                    @(item.MovieId != null ? $"{@item?.Movie?.Name}" : "")
                 </td>
                 <td>
-                    @item.Created
+                    @item.Created.ToString("dd MMM yyyy")
                 </td>
                 <td>
-                    @item.Edited
+                    @item.Edited?.ToString("dd MMM yyyy")
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

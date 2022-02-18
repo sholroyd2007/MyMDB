@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,16 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public MoviesController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public MoviesController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/Movies
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Movies.Include(m => m.MovieStudio);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await MyMDBService.GetAllMovies());
         }
 
         // GET: Admin/Movies/Details/5
@@ -35,9 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movies
-                .Include(m => m.MovieStudio)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var movie = await MyMDBService.GetMovieById(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -49,7 +51,6 @@ namespace MyMDB.Areas.Admin.Controllers
         // GET: Admin/Movies/Create
         public IActionResult Create()
         {
-            ViewData["MovieStudioId"] = new SelectList(_context.MovieStudios, "Id", "Id");
             return View();
         }
 
@@ -67,7 +68,6 @@ namespace MyMDB.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MovieStudioId"] = new SelectList(_context.MovieStudios, "Id", "Id", movie.MovieStudioId);
             return View(movie);
         }
 
@@ -79,12 +79,11 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await MyMDBService.GetMovieById(id.Value);
             if (movie == null)
             {
                 return NotFound();
             }
-            ViewData["MovieStudioId"] = new SelectList(_context.MovieStudios, "Id", "Id", movie.MovieStudioId);
             return View(movie);
         }
 
@@ -121,7 +120,6 @@ namespace MyMDB.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MovieStudioId"] = new SelectList(_context.MovieStudios, "Id", "Id", movie.MovieStudioId);
             return View(movie);
         }
 
@@ -133,9 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movies
-                .Include(m => m.MovieStudio)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var movie = await MyMDBService.GetMovieById(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -149,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await MyMDBService.GetMovieById(id);
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

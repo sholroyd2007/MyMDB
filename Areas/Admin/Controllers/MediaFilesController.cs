@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 using MyMDd;
 
 namespace MyMDB.Areas.Admin.Controllers
@@ -16,15 +17,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public MediaFilesController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public MediaFilesController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/MediaFiles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.MediaFiles.ToListAsync());
+            return View(await MyMDBService.GetAllMediaFiles());
         }
 
         // GET: Admin/MediaFiles/Details/5
@@ -35,8 +40,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var mediaFile = await _context.MediaFiles
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var mediaFile = await MyMDBService.GetMediaFileById(id.Value);
             if (mediaFile == null)
             {
                 return NotFound();
@@ -83,7 +87,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var mediaFile = await _context.MediaFiles.FindAsync(id);
+            var mediaFile = await MyMDBService.GetMediaFileById(id.Value);
             if (mediaFile == null)
             {
                 return NotFound();
@@ -143,8 +147,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var mediaFile = await _context.MediaFiles
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var mediaFile = await MyMDBService.GetMediaFileById(id.Value);
             if (mediaFile == null)
             {
                 return NotFound();
@@ -158,7 +161,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var mediaFile = await _context.MediaFiles.FindAsync(id);
+            var mediaFile = await MyMDBService.GetMediaFileById(id);
             _context.MediaFiles.Remove(mediaFile);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

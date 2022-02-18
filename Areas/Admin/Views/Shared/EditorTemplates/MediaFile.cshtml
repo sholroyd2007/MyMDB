@@ -21,10 +21,10 @@
 </div>
 
 <div class="form-group">
-    <label asp-for="MovieId">Movie</label>
-    <select class="form-control os-dropdown" asp-for="MovieId">
+    <label asp-for="CastCrewMemberId">Cast/Crew Member</label>
+    <select class="form-control os-dropdown" asp-for="CastCrewMemberId">
         <option value=""></option>
-        @foreach (var item in await MyMDBService.GetAllMovies())
+        @foreach (var item in await MyMDBService.GetAllCastCrewMembers())
         {
             <option value="@item.Id">@item.Name</option>
         }
@@ -32,10 +32,10 @@
 </div>
 
 <div class="form-group">
-    <label asp-for="CastCrewMemberId">Cast/Crew Member</label>
-    <select class="form-control os-dropdown" asp-for="CastCrewMemberId">
+    <label asp-for="CharacterId">Character</label>
+    <select class="form-control os-dropdown" asp-for="CharacterId">
         <option value=""></option>
-        @foreach (var item in await MyMDBService.GetAllCastCrewMembers())
+        @foreach (var item in await MyMDBService.GetAllCharacters())
         {
             <option value="@item.Id">@item.Name</option>
         }
