@@ -55,7 +55,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] FactType factType)
+        public async Task<IActionResult> Create(FactType factType)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] FactType factType)
+        public async Task<IActionResult> Edit(int id, FactType factType)
         {
             if (id != factType.Id)
             {

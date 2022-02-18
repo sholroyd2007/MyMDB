@@ -12,5 +12,7 @@ namespace MyMDB.Models
         public IEnumerable<Genre> Genres{ get; set; }
 
         public bool Active { get; set; }
+
+        public int EpisodeLength { get; set; }
     }
 }

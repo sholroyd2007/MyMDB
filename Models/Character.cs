@@ -2,8 +2,8 @@
 {
     public class Character : Entity
     {
-        public int ActorId { get; set; }
-        public CastCrewMember Actor { get; set; }
+        public int CastCrewMemberId { get; set; }
+        public CastCrewMember CastCrewMember { get; set; }
 
         public int? MovieId { get; set; }
         public int? EpisodeId { get; set; }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyMDB.Data;
 
 namespace MyMDB.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220218144806_updateEpisode")]
+    partial class updateEpisode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -552,6 +554,9 @@ namespace MyMDB.Data.Migrations
 
                     b.Property<string>("Language")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Length")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -1205,9 +1210,6 @@ namespace MyMDB.Data.Migrations
 
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("EpisodeLength")
-                        .HasColumnType("int");
 
                     b.Property<string>("Language")
                         .HasColumnType("nvarchar(max)");

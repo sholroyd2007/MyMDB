@@ -55,10 +55,11 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MovieId,EpisodeId,CharacterId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] Quote quote)
+        public async Task<IActionResult> Create(Quote quote)
         {
             if (ModelState.IsValid)
             {
+                quote.Created = DateTime.Now.ToLocalTime();
                 _context.Add(quote);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -87,7 +88,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MovieId,EpisodeId,CharacterId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] Quote quote)
+        public async Task<IActionResult> Edit(int id, Quote quote)
         {
             if (id != quote.Id)
             {
@@ -98,6 +99,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    quote.Edited = DateTime.Now.ToLocalTime();
                     _context.Update(quote);
                     await _context.SaveChangesAsync();
                 }

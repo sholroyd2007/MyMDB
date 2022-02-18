@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,15 +16,20 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public CastCrewMembersController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public CastCrewMembersController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/CastCrewMembers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Actors.ToListAsync());
+            var castCrewMembers = await MyMDBService.GetAllCastCrewMembers();
+            return View(castCrewMembers);
         }
 
         // GET: Admin/CastCrewMembers/Details/5
@@ -34,8 +40,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var castCrewMember = await _context.Actors
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var castCrewMember = await MyMDBService.GetCastCrewMemberById(id.Value);
             if (castCrewMember == null)
             {
                 return NotFound();
@@ -55,10 +60,11 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DOB,Died,From,ProductionRoleId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] CastCrewMember castCrewMember)
+        public async Task<IActionResult> Create(CastCrewMember castCrewMember)
         {
             if (ModelState.IsValid)
             {
+                castCrewMember.Created = DateTime.Now.ToLocalTime();
                 _context.Add(castCrewMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -74,7 +80,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var castCrewMember = await _context.Actors.FindAsync(id);
+            var castCrewMember = await MyMDBService.GetCastCrewMemberById(id.Value);
             if (castCrewMember == null)
             {
                 return NotFound();
@@ -87,7 +93,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DOB,Died,From,ProductionRoleId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] CastCrewMember castCrewMember)
+        public async Task<IActionResult> Edit(int id, CastCrewMember castCrewMember)
         {
             if (id != castCrewMember.Id)
             {
@@ -98,6 +104,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    castCrewMember.Edited = DateTime.Now.ToLocalTime(); 
                     _context.Update(castCrewMember);
                     await _context.SaveChangesAsync();
                 }
@@ -125,8 +132,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var castCrewMember = await _context.Actors
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var castCrewMember = await MyMDBService.GetCastCrewMemberById(id.Value);
             if (castCrewMember == null)
             {
                 return NotFound();
@@ -140,7 +146,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var castCrewMember = await _context.Actors.FindAsync(id);
+            var castCrewMember = await MyMDBService.GetCastCrewMemberById(id);
             _context.Actors.Remove(castCrewMember);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

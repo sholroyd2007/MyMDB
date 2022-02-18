@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyMDB.Data;
 
 namespace MyMDB.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220218143001_updateCharacterAndCastCrewMember")]
+    partial class updateCharacterAndCastCrewMember
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -485,7 +487,10 @@ namespace MyMDB.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CastCrewMemberId")
+                    b.Property<int>("ActorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CastCrewMemberId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
@@ -547,11 +552,11 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EpisodeNumber")
-                        .HasColumnType("int");
-
                     b.Property<string>("Language")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Length")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -559,10 +564,7 @@ namespace MyMDB.Data.Migrations
                     b.Property<bool>("Recommended")
                         .HasColumnType("bit");
 
-                    b.Property<int>("SeriesNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TVShowId")
+                    b.Property<int?>("TVShowId")
                         .HasColumnType("int");
 
                     b.Property<string>("Website")
@@ -1206,9 +1208,6 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EpisodeLength")
-                        .HasColumnType("int");
-
                     b.Property<string>("Language")
                         .HasColumnType("nvarchar(max)");
 
@@ -1378,22 +1377,16 @@ namespace MyMDB.Data.Migrations
                 {
                     b.HasOne("MyMDB.Models.CastCrewMember", "CastCrewMember")
                         .WithMany()
-                        .HasForeignKey("CastCrewMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CastCrewMemberId");
 
                     b.Navigation("CastCrewMember");
                 });
 
             modelBuilder.Entity("MyMDB.Models.Episode", b =>
                 {
-                    b.HasOne("MyMDB.Models.TVShow", "TVShow")
+                    b.HasOne("MyMDB.Models.TVShow", null)
                         .WithMany("Episodes")
-                        .HasForeignKey("TVShowId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TVShow");
+                        .HasForeignKey("TVShowId");
                 });
 
             modelBuilder.Entity("MyMDB.Models.Fact", b =>

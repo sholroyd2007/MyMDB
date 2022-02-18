@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,9 +16,13 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public AwardsController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public AwardsController(ApplicationDbContext context, 
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/Awards
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var award = await _context.Awards
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var award = await MyMDBService.GetAwardById(id.Value);
             if (award == null)
             {
                 return NotFound();
@@ -55,10 +59,11 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] Award award)
+        public async Task<IActionResult> Create(Award award)
         {
             if (ModelState.IsValid)
             {
+                award.Created = DateTime.Now.ToLocalTime();
                 _context.Add(award);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -74,7 +79,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var award = await _context.Awards.FindAsync(id);
+            var award = await MyMDBService.GetAwardById(id.Value);
             if (award == null)
             {
                 return NotFound();
@@ -87,7 +92,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] Award award)
+        public async Task<IActionResult> Edit(int id, Award award)
         {
             if (id != award.Id)
             {
@@ -98,6 +103,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    award.Edited = DateTime.Now.ToLocalTime();
                     _context.Update(award);
                     await _context.SaveChangesAsync();
                 }
@@ -125,8 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var award = await _context.Awards
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var award = await MyMDBService.GetAwardById(id.Value);
             if (award == null)
             {
                 return NotFound();
@@ -140,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var award = await _context.Awards.FindAsync(id);
+            var award = await MyMDBService.GetAwardById(id);
             _context.Awards.Remove(award);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

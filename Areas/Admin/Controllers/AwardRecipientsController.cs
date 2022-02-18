@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,16 +16,20 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public AwardRecipientsController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public AwardRecipientsController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/AwardRecipients
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ActorAwards.Include(a => a.Award).Include(a => a.AwardCategory);
-            return View(await applicationDbContext.ToListAsync());
+            var recipients = await MyMDBService.GetAllAwardRecipients();
+            return View(recipients);
         }
 
         // GET: Admin/AwardRecipients/Details/5
@@ -35,10 +40,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awardRecipient = await _context.ActorAwards
-                .Include(a => a.Award)
-                .Include(a => a.AwardCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var awardRecipient = await MyMDBService.GetAwardRecipientById(id.Value);
             if (awardRecipient == null)
             {
                 return NotFound();
@@ -50,8 +52,6 @@ namespace MyMDB.Areas.Admin.Controllers
         // GET: Admin/AwardRecipients/Create
         public IActionResult Create()
         {
-            ViewData["AwardId"] = new SelectList(_context.Awards, "Id", "Id");
-            ViewData["AwardCategoryId"] = new SelectList(_context.AwardCategories, "Id", "Id");
             return View();
         }
 
@@ -60,16 +60,15 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AwardId,AwardCategoryId,Year,Win,CastCrewMemberId,EpisodeId,TVShowId,MovieId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] AwardRecipient awardRecipient)
+        public async Task<IActionResult> Create(AwardRecipient awardRecipient)
         {
             if (ModelState.IsValid)
             {
+                awardRecipient.Created = DateTime.Now.ToLocalTime();
                 _context.Add(awardRecipient);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AwardId"] = new SelectList(_context.Awards, "Id", "Id", awardRecipient.AwardId);
-            ViewData["AwardCategoryId"] = new SelectList(_context.AwardCategories, "Id", "Id", awardRecipient.AwardCategoryId);
             return View(awardRecipient);
         }
 
@@ -81,13 +80,11 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awardRecipient = await _context.ActorAwards.FindAsync(id);
+            var awardRecipient = await MyMDBService.GetAwardRecipientById(id.Value);
             if (awardRecipient == null)
             {
                 return NotFound();
             }
-            ViewData["AwardId"] = new SelectList(_context.Awards, "Id", "Id", awardRecipient.AwardId);
-            ViewData["AwardCategoryId"] = new SelectList(_context.AwardCategories, "Id", "Id", awardRecipient.AwardCategoryId);
             return View(awardRecipient);
         }
 
@@ -96,7 +93,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AwardId,AwardCategoryId,Year,Win,CastCrewMemberId,EpisodeId,TVShowId,MovieId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] AwardRecipient awardRecipient)
+        public async Task<IActionResult> Edit(int id, AwardRecipient awardRecipient)
         {
             if (id != awardRecipient.Id)
             {
@@ -107,6 +104,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    awardRecipient.Edited = DateTime.Now.ToLocalTime();
                     _context.Update(awardRecipient);
                     await _context.SaveChangesAsync();
                 }
@@ -123,8 +121,6 @@ namespace MyMDB.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AwardId"] = new SelectList(_context.Awards, "Id", "Id", awardRecipient.AwardId);
-            ViewData["AwardCategoryId"] = new SelectList(_context.AwardCategories, "Id", "Id", awardRecipient.AwardCategoryId);
             return View(awardRecipient);
         }
 
@@ -136,10 +132,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awardRecipient = await _context.ActorAwards
-                .Include(a => a.Award)
-                .Include(a => a.AwardCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var awardRecipient = await MyMDBService.GetAwardRecipientById(id.Value);
             if (awardRecipient == null)
             {
                 return NotFound();
@@ -153,7 +146,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var awardRecipient = await _context.ActorAwards.FindAsync(id);
+            var awardRecipient = await MyMDBService.GetAwardRecipientById(id);
             _context.ActorAwards.Remove(awardRecipient);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

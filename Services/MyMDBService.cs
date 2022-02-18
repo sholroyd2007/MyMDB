@@ -20,14 +20,18 @@ namespace MyMDB.Services
         Task<Genre> GetGenreById(int id);
         Task<MovieSeries> GetMovieSeriesById(int id);
         Task<MovieStudio> GetMovieStudioById(int id);
+        Task<Character> GetCharacterById(int id);
         Task<IEnumerable<Movie>> GetAllMovies();
         Task<IEnumerable<TVShow>> GetAllTVShows();
         Task<IEnumerable<Episode>> GetAllEpisodes();
         Task<IEnumerable<Award>> GetAllAwards();
+        Task<IEnumerable<AwardCategory>> GetAllAwardCategories();
+        Task<IEnumerable<AwardRecipient>> GetAllAwardRecipients();
         Task<IEnumerable<Genre>> GetAllGenres();
         Task<IEnumerable<MovieSeries>> GetAllMovieSeries();
         Task<IEnumerable<MovieStudio>> GetAllMovieStudios();
         Task<IEnumerable<CastCrewMember>> GetAllCastCrewMembers();
+        Task<IEnumerable<Character>> GetAllCharacters();
         Task<IEnumerable<ProductionRole>> GetProductionRolesByCastCrewMemberId(int id);
         Task<IEnumerable<CastCrewMember>> GetCastCrewMembersByMovieId(int id);
         Task<IEnumerable<Movie>> GetMoviesByGenre(int id);
@@ -338,6 +342,42 @@ namespace MyMDB.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
             return x;
+        }
+
+        public async Task<IEnumerable<AwardCategory>> GetAllAwardCategories()
+        {
+            var categories = await Context.AwardCategories
+                .AsNoTracking()
+                .ToListAsync();
+            return categories;
+        }
+
+        public async Task<IEnumerable<AwardRecipient>> GetAllAwardRecipients()
+        {
+            var recipients = await Context.AwardRecipients
+                .AsNoTracking()
+                .Include(e=>e.Award)
+                .Include(e=>e.AwardCategory)
+                .ToListAsync();
+            return recipients;
+        }
+
+        public async Task<IEnumerable<Character>> GetAllCharacters()
+        {
+            var characters = await Context.Characters
+                            .AsNoTracking()
+                            .Include(e => e.CastCrewMember)
+                            .ToListAsync();
+            return characters;
+        }
+
+        public async Task<Character> GetCharacterById(int id)
+        {
+            var character = await Context.Characters
+                .AsNoTracking()
+                .Include(e => e.CastCrewMember)
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return character;
         }
     }
 }

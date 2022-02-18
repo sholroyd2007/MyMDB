@@ -55,7 +55,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,MovieId,EpisodeId,TVShowId,CastCrewMemberId")] Fact fact)
+        public async Task<IActionResult> Create(Fact fact)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,MovieId,EpisodeId,TVShowId,CastCrewMemberId")] Fact fact)
+        public async Task<IActionResult> Edit(int id, Fact fact)
         {
             if (id != fact.Id)
             {

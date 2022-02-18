@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin
 {
@@ -15,15 +16,19 @@ namespace MyMDB.Areas.Admin
     {
         private readonly ApplicationDbContext _context;
 
-        public AwardCategoriesController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public AwardCategoriesController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/AwardCategories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AwardCategories.ToListAsync());
+            return View(await MyMDBService.GetAllAwardCategories());
         }
 
         // GET: Admin/AwardCategories/Details/5
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var awardCategory = await _context.AwardCategories
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var awardCategory = await MyMDBService.GetAwardCategoryById(id.Value);
             if (awardCategory == null)
             {
                 return NotFound();
@@ -55,10 +59,11 @@ namespace MyMDB.Areas.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] AwardCategory awardCategory)
+        public async Task<IActionResult> Create(AwardCategory awardCategory)
         {
             if (ModelState.IsValid)
             {
+                awardCategory.Created = DateTime.Now.ToLocalTime();
                 _context.Add(awardCategory);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -74,7 +79,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var awardCategory = await _context.AwardCategories.FindAsync(id);
+            var awardCategory = await MyMDBService.GetAwardCategoryById(id.Value);
             if (awardCategory == null)
             {
                 return NotFound();
@@ -87,7 +92,7 @@ namespace MyMDB.Areas.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] AwardCategory awardCategory)
+        public async Task<IActionResult> Edit(int id, AwardCategory awardCategory)
         {
             if (id != awardCategory.Id)
             {
@@ -98,6 +103,7 @@ namespace MyMDB.Areas.Admin
             {
                 try
                 {
+                    awardCategory.Edited = DateTime.Now.ToLocalTime();
                     _context.Update(awardCategory);
                     await _context.SaveChangesAsync();
                 }
@@ -125,8 +131,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var awardCategory = await _context.AwardCategories
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var awardCategory = await MyMDBService.GetAwardCategoryById(id.Value);
             if (awardCategory == null)
             {
                 return NotFound();
@@ -140,7 +145,7 @@ namespace MyMDB.Areas.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var awardCategory = await _context.AwardCategories.FindAsync(id);
+            var awardCategory = await MyMDBService.GetAwardCategoryById(id);
             _context.AwardCategories.Remove(awardCategory);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

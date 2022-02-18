@@ -10,7 +10,5 @@ namespace MyMDB.Models
         public DateTime? Died { get; set; }
 
         public string From { get; set; }
-
-        public int ProductionRoleId { get; set; }
     }
 }

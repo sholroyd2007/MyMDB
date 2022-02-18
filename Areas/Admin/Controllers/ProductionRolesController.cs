@@ -64,10 +64,11 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CastCrewMemberId,JobRoleId,CharacterId,MovieId,EpisodeId,CreditOnly,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] ProductionRole productionRole)
+        public async Task<IActionResult> Create(ProductionRole productionRole)
         {
             if (ModelState.IsValid)
             {
+                productionRole.Created = DateTime.Now.ToLocalTime();
                 _context.Add(productionRole);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -104,7 +105,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CastCrewMemberId,JobRoleId,CharacterId,MovieId,EpisodeId,CreditOnly,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] ProductionRole productionRole)
+        public async Task<IActionResult> Edit(int id, ProductionRole productionRole)
         {
             if (id != productionRole.Id)
             {
@@ -115,6 +116,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    productionRole.Edited = DateTime.Now.ToLocalTime();
                     _context.Update(productionRole);
                     await _context.SaveChangesAsync();
                 }

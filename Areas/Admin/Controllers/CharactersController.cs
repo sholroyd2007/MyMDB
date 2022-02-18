@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,16 +16,20 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public CharactersController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public CharactersController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/Characters
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Characters.Include(c => c.Actor);
-            return View(await applicationDbContext.ToListAsync());
+            var characters = await MyMDBService.GetAllCharacters();
+            return View(characters);
         }
 
         // GET: Admin/Characters/Details/5
@@ -35,9 +40,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var character = await _context.Characters
-                .Include(c => c.Actor)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var character = await MyMDBService.GetCharacterById(id.Value);
             if (character == null)
             {
                 return NotFound();
@@ -49,7 +52,6 @@ namespace MyMDB.Areas.Admin.Controllers
         // GET: Admin/Characters/Create
         public IActionResult Create()
         {
-            ViewData["ActorId"] = new SelectList(_context.Actors, "Id", "Id");
             return View();
         }
 
@@ -58,15 +60,15 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ActorId,MovieId,EpisodeId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] Character character)
+        public async Task<IActionResult> Create(Character character)
         {
             if (ModelState.IsValid)
             {
+                character.Created = DateTime.Now.ToLocalTime();
                 _context.Add(character);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ActorId"] = new SelectList(_context.Actors, "Id", "Id", character.ActorId);
             return View(character);
         }
 
@@ -78,12 +80,11 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var character = await _context.Characters.FindAsync(id);
+            var character = await MyMDBService.GetCharacterById(id.Value);
             if (character == null)
             {
                 return NotFound();
             }
-            ViewData["ActorId"] = new SelectList(_context.Actors, "Id", "Id", character.ActorId);
             return View(character);
         }
 
@@ -92,7 +93,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ActorId,MovieId,EpisodeId,Id,Name,Description,Created,Edited,Deleted,Recommended,Language,Website")] Character character)
+        public async Task<IActionResult> Edit(int id, Character character)
         {
             if (id != character.Id)
             {
@@ -103,6 +104,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
+                    character.Edited = DateTime.Now.ToLocalTime(); 
                     _context.Update(character);
                     await _context.SaveChangesAsync();
                 }
@@ -119,7 +121,6 @@ namespace MyMDB.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ActorId"] = new SelectList(_context.Actors, "Id", "Id", character.ActorId);
             return View(character);
         }
 
@@ -131,9 +132,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var character = await _context.Characters
-                .Include(c => c.Actor)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var character = await MyMDBService.GetCharacterById(id.Value);
             if (character == null)
             {
                 return NotFound();
@@ -147,7 +146,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var character = await _context.Characters.FindAsync(id);
+            var character = await MyMDBService.GetCharacterById(id);
             _context.Characters.Remove(character);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
