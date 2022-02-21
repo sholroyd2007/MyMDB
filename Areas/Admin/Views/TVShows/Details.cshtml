@@ -10,6 +10,15 @@
     <h4>TVShow</h4>
     <hr />
     @Html.EditorForModel()
+
+    <ul>
+        @foreach (var item in Model.Episodes)
+       {
+           <li>
+               @($"S{(item.SeriesNumber < 10 ? "0" : "")}{item.SeriesNumber}E{(item.EpisodeNumber < 10 ? "0" : "")}{item.EpisodeNumber} - {item.Name}")
+           </li>
+       }
+    </ul>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

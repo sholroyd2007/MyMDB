@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyMDB.Data;
 
 namespace MyMDB.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220221132300_addLengthToMovie")]
+    partial class addLengthToMovie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1200,8 +1202,8 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
-                        .HasColumnType("int");
+                    b.Property<string>("Creator")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
@@ -1228,8 +1230,6 @@ namespace MyMDB.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
 
                     b.ToTable("TVShows");
                 });
@@ -1662,17 +1662,6 @@ namespace MyMDB.Data.Migrations
                     b.Navigation("Episode");
 
                     b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.TVShow", b =>
-                {
-                    b.HasOne("MyMDB.Models.CastCrewMember", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("MyMDB.Models.Award", b =>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using MyMDB.Services;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace MyMDB.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public TVShowsController(ApplicationDbContext context)
+        public IMyMDBService MyMDBService { get; }
+
+        public TVShowsController(ApplicationDbContext context,
+            IMyMDBService myMDBService)
         {
             _context = context;
+            MyMDBService = myMDBService;
         }
 
         // GET: Admin/TVShows
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TVShows.ToListAsync());
+            return View(await MyMDBService.GetAllTVShows());
         }
 
         // GET: Admin/TVShows/Details/5
@@ -34,8 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var tVShow = await _context.TVShows
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var tVShow = await MyMDBService.GetTVShowById(id.Value);
             if (tVShow == null)
             {
                 return NotFound();
@@ -75,7 +79,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var tVShow = await _context.TVShows.FindAsync(id);
+            var tVShow = await MyMDBService.GetTVShowById(id.Value);
             if (tVShow == null)
             {
                 return NotFound();
@@ -127,8 +131,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var tVShow = await _context.TVShows
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var tVShow = await MyMDBService.GetTVShowById(id.Value);
             if (tVShow == null)
             {
                 return NotFound();
@@ -142,7 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tVShow = await _context.TVShows.FindAsync(id);
+            var tVShow = await MyMDBService.GetTVShowById(id);
             _context.TVShows.Remove(tVShow);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

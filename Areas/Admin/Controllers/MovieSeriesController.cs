@@ -39,7 +39,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieSeries = await MyMDBService.GetMovieStudioById(id.Value);
+            var movieSeries = await MyMDBService.GetMovieSeriesById(id.Value);
             if (movieSeries == null)
             {
                 return NotFound();

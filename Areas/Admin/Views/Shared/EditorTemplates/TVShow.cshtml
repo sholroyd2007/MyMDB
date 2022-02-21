@@ -1,9 +1,14 @@
 ﻿@model TVShow
 
 <div class="form-group">
-    <label asp-for="Creator" class="control-label"></label>
-    <input asp-for="Creator" class="form-control" />
-    <span asp-validation-for="Creator" class="text-danger"></span>
+    <label asp-for="CreatorId">Creator</label>
+    <select class="form-control os-dropdown" asp-for="CreatorId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllCastCrewMembers())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
 </div>
 <div class="form-group">
     <input class="form-check" type="checkbox" asp-for="Active" />

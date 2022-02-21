@@ -14,8 +14,6 @@
         <tr>
             <th></th>
             <th>Name</th>
-            <th>Actor</th>
-            <th>TV Show/Movie</th>
             <th>Created</th>
             <th>Edited</th>
             <th></th>
@@ -31,13 +29,6 @@
                 </td>
                 <td>
                     @item.Name
-                </td>
-                <td>
-                    @item?.CastCrewMember?.Name
-                </td>
-                <td>
-                    @(item.EpisodeId != null ? $"{@item?.Episode?.Name}" : "")
-                    @(item.MovieId != null ? $"{@item?.Movie?.Name}" : "")
                 </td>
                 <td>
                     @item.Created.ToString("dd MMM yyyy")

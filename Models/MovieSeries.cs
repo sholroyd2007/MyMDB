@@ -4,6 +4,11 @@ namespace MyMDB.Models
 {
     public class MovieSeries : Entity
     {
-        public IEnumerable<Movie> Movies { get; set; }
+        public List<Movie> Movies { get; set; }
+
+        public MovieSeries()
+        {
+            Movies = new List<Movie>();
+        }
     }
 }

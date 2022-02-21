@@ -7,7 +7,7 @@ namespace MyMDB.Models
     {
         public DateTime AirDate { get; set; }
 
-        public IEnumerable<CastCrewMember> CastCrewMembers { get; set; }
+        public List<CastCrewMember> CastCrewMembers { get; set; }
 
         public int SeriesNumber { get; set; }
 
@@ -15,6 +15,11 @@ namespace MyMDB.Models
 
         public TVShow TVShow { get; set; }
         public int TVShowId { get; set; }
+
+        public Episode()
+        {
+            CastCrewMembers = new List<CastCrewMember>();
+        }
 
 
     }

@@ -66,6 +66,12 @@ namespace MyMDB.Areas.Admin.Controllers
                 episode.Created = DateTime.Now.ToLocalTime();
                 _context.Add(episode);
                 await _context.SaveChangesAsync();
+
+                var tvShow = await MyMDBService.GetTVShowById(episode.TVShowId);
+                tvShow.Episodes.Add(episode);
+                _context.TVShows.Update(tvShow);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(episode);

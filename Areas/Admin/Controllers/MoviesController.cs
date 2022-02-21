@@ -155,5 +155,17 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             return _context.Movies.Any(e => e.Id == id);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddMovieToSeries(int id)
+        {
+            var movie = await MyMDBService.GetMovieById(id);
+            var seriesId = Int32.Parse(Request.Form["movieSeriesId"]);
+            var movieSeries = await MyMDBService.GetMovieSeriesById(seriesId);
+            movieSeries.Movies.Add(movie);
+            _context.MovieSeries.Update(movieSeries);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { controller = "Movies", id = id });
+        }
     }
 }

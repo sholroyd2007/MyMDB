@@ -63,6 +63,24 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (productionRole.EpisodeId != null)
+                {
+                    var castCrewMember = await MyMDBService.GetCastCrewMemberById(productionRole.CastCrewMemberId);
+                    var episode = await MyMDBService.GetEpisodeById(productionRole.EpisodeId.Value);
+                    episode.CastCrewMembers.Add(castCrewMember);
+                    _context.Episodes.Update(episode);
+                    await _context.SaveChangesAsync();
+                }
+
+                if (productionRole.MovieId != null)
+                {
+                    var castCrewMember = await MyMDBService.GetCastCrewMemberById(productionRole.CastCrewMemberId);
+                    var movie = await MyMDBService.GetMovieById(productionRole.MovieId.Value);
+                    movie.CastCrewMembers.Add(castCrewMember);
+                    _context.Movies.Update(movie);
+                    await _context.SaveChangesAsync();
+                }
+
                 productionRole.Created = DateTime.Now.ToLocalTime();
                 _context.Add(productionRole);
                 await _context.SaveChangesAsync();

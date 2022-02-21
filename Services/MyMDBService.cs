@@ -76,6 +76,7 @@ namespace MyMDB.Services
         public async Task<Movie> GetMovieById(int id)
         {
             var movie = await Context.Movies
+                .Include(e=>e.CastCrewMembers)
                 .Include(e => e.MovieStudio)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return movie;
@@ -154,6 +155,7 @@ namespace MyMDB.Services
         {
             var show = await Context.TVShows
                 .AsNoTracking()
+                .Include(e=>e.Episodes)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return show;
         }
@@ -273,6 +275,7 @@ namespace MyMDB.Services
         public async Task<MovieSeries> GetMovieSeriesById(int id)
         {
             var x = await Context.MovieSeries
+                .Include(e=>e.Movies)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
             return x;
@@ -312,9 +315,6 @@ namespace MyMDB.Services
         {
             var characters = await Context.Characters
                             .AsNoTracking()
-                            .Include(e => e.CastCrewMember)
-                            .Include(e => e.Movie)
-                            .Include(e => e.Episode)
                             .ToListAsync();
             return characters;
         }
@@ -323,9 +323,6 @@ namespace MyMDB.Services
         {
             var character = await Context.Characters
                             .AsNoTracking()
-                            .Include(e => e.CastCrewMember)
-                            .Include(e => e.Movie)
-                            .Include(e => e.Episode)
                             .FirstOrDefaultAsync(e => e.Id == id);
             return character;
         }
