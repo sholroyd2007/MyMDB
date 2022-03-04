@@ -53,6 +53,8 @@ namespace MyMDB.Services
         Task<IEnumerable<Movie>> GetMoviesByMovieSeries(int id);
         Task<IEnumerable<Movie>> GetMoviesByMovieStudio(int id);
         Task<IEnumerable<Quote>> GetQuotesByMovieId(int id);
+        Task<IEnumerable<ProductionRole>> GetProductionRolesByCastCrewMemberId(int id);
+        Task<IEnumerable<Episode>> GetEpisodesByTVShowId(int id);
     }
 
     public class MyMDBService : IMyMDBService
@@ -76,6 +78,12 @@ namespace MyMDB.Services
         public async Task<Movie> GetMovieById(int id)
         {
             var movie = await Context.Movies
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.CastCrewMember)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
                 .Include(e=>e.CastCrewMembers)
                 .Include(e => e.MovieStudio)
                 .FirstOrDefaultAsync(e => e.Id == id);
@@ -154,6 +162,12 @@ namespace MyMDB.Services
         public async Task<TVShow> GetTVShowById(int id)
         {
             var show = await Context.TVShows
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.CastCrewMember)
                 .AsNoTracking()
                 .Include(e=>e.Episodes)
                 .FirstOrDefaultAsync(e => e.Id == id);
@@ -220,6 +234,10 @@ namespace MyMDB.Services
         public async Task<CastCrewMember> GetCastCrewMemberById(int id)
         {
             var x = await Context.CastCrewMember
+                .Include(e=>e.AwardRecipients)
+                .ThenInclude(e=>e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
             return x;
@@ -228,6 +246,12 @@ namespace MyMDB.Services
         public async Task<Episode> GetEpisodeById(int id)
         {
             var x = await Context.Episodes
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.Award)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.AwardCategory)
+                .Include(e => e.AwardRecipients)
+                .ThenInclude(e => e.CastCrewMember)
                 .AsNoTracking()
                 .Include(e => e.TVShow)
                 .FirstOrDefaultAsync(e => e.Id == id);
@@ -485,6 +509,65 @@ namespace MyMDB.Services
                             .Include(e => e.Episode)
                             .ToListAsync();
             return quotes;
+        }
+
+        public async Task<IEnumerable<ProductionRole>> GetProductionRolesByCastCrewMemberId(int id)
+        {
+            var castCrewMember = await GetCastCrewMemberById(id);
+            var roles = await Context.ProductionRoles
+                .Include(e=>e.Movie)
+                .Include(e=>e.Episode)
+                .Include(e=>e.MediaFiles)
+                .Include(e=>e.Character)
+                .Include(e=>e.JobRole)
+                .AsNoTracking()
+                .Where(e => e.CastCrewMemberId == castCrewMember.Id)
+                .ToListAsync();
+            return roles;
+
+        }
+
+        public async Task<IEnumerable<ProductionRole>> GetProductionRolesByEpisodeId(int id)
+        {
+            var epsisode = await GetEpisodeById(id);
+            var roles = await Context.ProductionRoles
+                .Include(e => e.Movie)
+                .Include(e => e.Episode)
+                .Include(e => e.MediaFiles)
+                .Include(e => e.Character)
+                .Include(e => e.JobRole)
+                .AsNoTracking()
+                .Where(e => e.EpisodeId == epsisode.Id)
+                .ToListAsync();
+            return roles;
+
+        }
+
+        public async Task<IEnumerable<ProductionRole>> GetProductionRolesByTVShowId(int id)
+        {
+            var tvShow = await GetTVShowById(id);
+            var episodes = await GetEpisodesByTVShowId(tvShow.Id);
+            
+            var roles = new List<ProductionRole>();
+            foreach(var episode in episodes)
+            {
+                var episodeRoles = await GetProductionRolesByEpisodeId(episode.Id);
+                foreach(var role in episodeRoles)
+                {
+                    var r = await GetProductionRoleById(role.Id);
+                    roles.Add(role);
+                }
+            }
+            return roles;
+        }
+
+        public async Task<IEnumerable<Episode>> GetEpisodesByTVShowId(int id)
+        {
+            var tvShow = await GetTVShowById(id);
+            var episodes = await Context.Episodes.AsNoTracking()
+                .Where(e => e.TVShowId == tvShow.Id)
+                .ToListAsync();
+            return episodes;
         }
     }
 }

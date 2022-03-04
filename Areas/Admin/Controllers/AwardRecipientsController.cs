@@ -64,6 +64,34 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (awardRecipient.CastCrewMemberId != null)
+                {
+                    var castCrew = await MyMDBService.GetCastCrewMemberById(awardRecipient.CastCrewMemberId.Value);
+                    castCrew.AwardRecipients.Add(awardRecipient);
+                    _context.Update(castCrew);
+                }
+
+                if (awardRecipient.MovieId != null)
+                {
+                    var movie = await MyMDBService.GetMovieById(awardRecipient.MovieId.Value);
+                    movie.AwardRecipients.Add(awardRecipient);
+                    _context.Update(movie);
+                }
+
+                if (awardRecipient.EpisodeId != null)
+                {
+                    var episode = await MyMDBService.GetEpisodeById(awardRecipient.EpisodeId.Value);
+                    episode.AwardRecipients.Add(awardRecipient);
+                    _context.Update(episode);
+                }
+
+                if (awardRecipient.TVShowId != null)
+                {
+                    var tvShow = await MyMDBService.GetTVShowById(awardRecipient.TVShowId.Value);
+                    tvShow.AwardRecipients.Add(awardRecipient);
+                    _context.Update(tvShow);
+                }
+
                 awardRecipient.Created = DateTime.Now.ToLocalTime();
                 _context.Add(awardRecipient);
                 await _context.SaveChangesAsync();

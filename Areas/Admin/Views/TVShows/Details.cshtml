@@ -10,6 +10,37 @@
     <h4>TVShow</h4>
     <hr />
     @Html.EditorForModel()
+    <hr />
+   @if (Model.AwardRecipients.Any())
+    {
+        <h4>Awards</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Award</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Cast/Crew</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Win</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.AwardRecipients)
+                {
+                    <tr>
+                        <td>@item.Award.Name</td>
+                        <td>@item.AwardCategory.Name</td>
+                        @if(item.CastCrewMemberId != null)
+                        {
+                            <td>@item.CastCrewMember.Name</td>
+                        }
+                        <td>@item.Year</td>
+                        <td>@(item.Win ? "Win" : "Nominated")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 
     <ul>
         @foreach (var item in Model.Episodes)
