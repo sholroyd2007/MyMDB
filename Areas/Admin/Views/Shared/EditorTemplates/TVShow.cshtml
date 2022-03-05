@@ -4,7 +4,7 @@
     <label asp-for="CreatorId">Creator</label>
     <select class="form-control os-dropdown" asp-for="CreatorId">
         <option value=""></option>
-        @foreach (var item in await JobService.GetAllCastCrewMembers())
+        @foreach (var item in await MyMDBService.GetAllCastCrewMembers())
         {
             <option value="@item.Id">@item.Name</option>
         }

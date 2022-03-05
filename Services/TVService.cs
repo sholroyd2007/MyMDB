@@ -21,14 +21,14 @@ namespace MyMDB.Services
     public class TVService : ITVService
     {
         public TVService(ApplicationDbContext context,
-            IJobService jobService)
+            IMyMDBService MyMDBService)
         {
             Context = context;
-            JobService = jobService;
+            MyMDBService = MyMDBService;
         }
 
         public ApplicationDbContext Context { get; }
-        public IJobService JobService { get; }
+        public IMyMDBService MyMDBService { get; }
 
         public async Task<IEnumerable<TVShow>> GetAllTVShows()
         {
@@ -108,7 +108,7 @@ namespace MyMDB.Services
 
         public async Task<int> GetEpisodeCountByProductionRoleId(int id)
         {
-            var productionRole = await JobService.GetProductionRoleById(id);
+            var productionRole = await MyMDBService.GetProductionRoleById(id);
 
             var roles = await Context.ProductionRoles.AsNoTracking()
                 .Where(e => e.CastCrewMemberId == productionRole.CastCrewMemberId

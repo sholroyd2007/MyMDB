@@ -19,7 +19,6 @@ namespace MyMDB.Areas.Admin.Controllers
 
         public IMyMDBService MyMDBService { get; }
         public IMediaService MediaService { get; }
-        public IJobService JobService { get; }
         public ITVService TVService { get; }
         public IMovieService MovieService { get; }
         public IAwardService AwardService { get; }
@@ -27,7 +26,6 @@ namespace MyMDB.Areas.Admin.Controllers
         public MediaFilesController(ApplicationDbContext context,
             IMyMDBService myMDBService,
             IMediaService mediaService,
-            IJobService jobService,
             ITVService tVService,
             IMovieService movieService,
             IAwardService awardService)
@@ -35,7 +33,6 @@ namespace MyMDB.Areas.Admin.Controllers
             _context = context;
             MyMDBService = myMDBService;
             MediaService = mediaService;
-            JobService = jobService;
             TVService = tVService;
             MovieService = movieService;
             AwardService = awardService;
@@ -100,7 +97,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.CastCrewMemberId != null)
                 {
-                    var castCrewMember = await JobService.GetCastCrewMemberById(mediaFile.CastCrewMemberId.Value);
+                    var castCrewMember = await MyMDBService.GetCastCrewMemberById(mediaFile.CastCrewMemberId.Value);
                     castCrewMember.MediaFiles.Add(mediaFile);
                     _context.CastCrewMember.Update(castCrewMember);
                     await _context.SaveChangesAsync();
@@ -108,7 +105,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.CharacterId != null)
                 {
-                    var character = await JobService.GetCharacterById(mediaFile.CharacterId.Value);
+                    var character = await MyMDBService.GetCharacterById(mediaFile.CharacterId.Value);
                     character.MediaFiles.Add(mediaFile);
                     _context.Characters.Update(character);
                     await _context.SaveChangesAsync();

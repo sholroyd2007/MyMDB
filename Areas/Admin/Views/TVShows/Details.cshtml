@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
-    var prodRoles = await JobService.GetProductionRolesByTVShowId(Model.Id);
+    var prodRoles = await MyMDBService.GetProductionRolesByTVShowId(Model.Id);
     var groupedProdRoles = prodRoles.GroupBy(e => e.JobRoleId);
 }
 
@@ -62,7 +62,7 @@
                 {
                     foreach (var role in item.Where(e=>e.JobRoleId == item.Key))
                     {
-                        var prodRole = await JobService.GetProductionRoleById(role.Id);
+                        var prodRole = await MyMDBService.GetProductionRoleById(role.Id);
                         var episodeCount = await TVService.GetEpisodeCountByProductionRoleId(role.Id);
                         <tr>
                             <td>@prodRole.CastCrewMember.Name</td>

@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
-    var prodRoles = await JobService.GetProductionRolesByCharacterId(Model.Id);
+    var prodRoles = await MyMDBService.GetProductionRolesByCharacterId(Model.Id);
 }
 
 <h1>Details</h1>

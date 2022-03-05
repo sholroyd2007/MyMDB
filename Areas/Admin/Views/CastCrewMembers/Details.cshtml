@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
-    var roles = await JobService.GetProductionRolesByCastCrewMemberId(Model.Id);
+    var roles = await MyMDBService.GetProductionRolesByCastCrewMemberId(Model.Id);
     var actingRoles = roles.Where(e => e.JobRole.Name == "Actor");
     var directingRoles = roles.Where(e => e.JobRole.Name == "Director");
     var producingRoles = roles.Where(e => e.JobRole.Name == "Producer");

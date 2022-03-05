@@ -17,21 +17,18 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
-        public IJobService JobService { get; }
 
         public CastCrewMembersController(ApplicationDbContext context,
-            IMyMDBService myMDBService,
-            IJobService jobService)
+            IMyMDBService myMDBService)
         {
             _context = context;
             MyMDBService = myMDBService;
-            JobService = jobService;
         }
 
         // GET: Admin/CastCrewMembers
         public async Task<IActionResult> Index()
         {
-            var castCrewMembers = await JobService.GetAllCastCrewMembers();
+            var castCrewMembers = await MyMDBService.GetAllCastCrewMembers();
             return View(castCrewMembers);
         }
 
@@ -43,7 +40,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var castCrewMember = await JobService.GetCastCrewMemberById(id.Value);
+            var castCrewMember = await MyMDBService.GetCastCrewMemberById(id.Value);
             if (castCrewMember == null)
             {
                 return NotFound();
@@ -83,7 +80,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var castCrewMember = await JobService.GetCastCrewMemberById(id.Value);
+            var castCrewMember = await MyMDBService.GetCastCrewMemberById(id.Value);
             if (castCrewMember == null)
             {
                 return NotFound();
@@ -135,7 +132,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var castCrewMember = await JobService.GetCastCrewMemberById(id.Value);
+            var castCrewMember = await MyMDBService.GetCastCrewMemberById(id.Value);
             if (castCrewMember == null)
             {
                 return NotFound();
@@ -149,7 +146,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var castCrewMember = await JobService.GetCastCrewMemberById(id);
+            var castCrewMember = await MyMDBService.GetCastCrewMemberById(id);
             _context.Actors.Remove(castCrewMember);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

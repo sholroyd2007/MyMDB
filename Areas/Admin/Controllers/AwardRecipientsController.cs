@@ -20,21 +20,19 @@ namespace MyMDB.Areas.Admin.Controllers
         public IAwardService AwardService { get; }
         public ITVService TVService { get; }
         public IMovieService MovieService { get; }
-        public IJobService JobService { get; }
 
         public AwardRecipientsController(ApplicationDbContext context,
             IMyMDBService myMDBService,
             IAwardService awardService,
             ITVService tVService,
             IMovieService movieService,
-            IJobService jobService)
+            IMyMDBService MyMDBService)
         {
             _context = context;
             MyMDBService = myMDBService;
             AwardService = awardService;
             TVService = tVService;
             MovieService = movieService;
-            JobService = jobService;
         }
 
         // GET: Admin/AwardRecipients
@@ -78,7 +76,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 if (awardRecipient.CastCrewMemberId != null)
                 {
-                    var castCrew = await JobService.GetCastCrewMemberById(awardRecipient.CastCrewMemberId.Value);
+                    var castCrew = await MyMDBService.GetCastCrewMemberById(awardRecipient.CastCrewMemberId.Value);
                     castCrew.AwardRecipients.Add(awardRecipient);
                     _context.Update(castCrew);
                 }

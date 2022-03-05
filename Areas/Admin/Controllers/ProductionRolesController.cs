@@ -17,19 +17,16 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
-        public IJobService JobService { get; }
         public IMovieService MovieService { get; }
         public ITVService TVService { get; }
 
         public ProductionRolesController(ApplicationDbContext context,
             IMyMDBService myMDBService,
-            IJobService jobService,
             IMovieService movieService,
             ITVService tVService)
         {
             _context = context;
             MyMDBService = myMDBService;
-            JobService = jobService;
             MovieService = movieService;
             TVService = tVService;
         }
@@ -37,7 +34,7 @@ namespace MyMDB.Areas.Admin.Controllers
         // GET: Admin/ProductionRoles
         public async Task<IActionResult> Index()
         {
-            return View(await JobService.GetAllProductionRoles());
+            return View(await MyMDBService.GetAllProductionRoles());
         }
 
         // GET: Admin/ProductionRoles/Details/5
@@ -48,7 +45,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await JobService.GetProductionRoleById(id.Value);
+            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
@@ -107,7 +104,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await JobService.GetProductionRoleById(id.Value);
+            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
@@ -159,7 +156,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await JobService.GetProductionRoleById(id.Value);
+            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
@@ -173,7 +170,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var productionRole = await JobService.GetProductionRoleById(id);
+            var productionRole = await MyMDBService.GetProductionRoleById(id);
             _context.ProductionRoles.Remove(productionRole);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
