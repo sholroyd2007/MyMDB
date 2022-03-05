@@ -37,9 +37,11 @@ namespace MyMDB.Services
 
     public class MyMDBService : IMyMDBService
     {
-        public MyMDBService(ApplicationDbContext context)
+        public MyMDBService(ApplicationDbContext context,
+            ITVService tVService)
         {
-            Context = context;           
+            Context = context;
+            TVService = tVService;
         }
 
         public ApplicationDbContext Context { get; }
