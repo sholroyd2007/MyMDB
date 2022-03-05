@@ -17,18 +17,27 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IJobService JobService { get; }
+        public IMovieService MovieService { get; }
+        public ITVService TVService { get; }
 
         public ProductionRolesController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IJobService jobService,
+            IMovieService movieService,
+            ITVService tVService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            JobService = jobService;
+            MovieService = movieService;
+            TVService = tVService;
         }
 
         // GET: Admin/ProductionRoles
         public async Task<IActionResult> Index()
         {
-            return View(await MyMDBService.GetAllProductionRoles());
+            return View(await JobService.GetAllProductionRoles());
         }
 
         // GET: Admin/ProductionRoles/Details/5
@@ -39,7 +48,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
+            var productionRole = await JobService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
@@ -63,27 +72,27 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                productionRole.Created = DateTime.Now.ToLocalTime();
+                _context.Add(productionRole);
+                await _context.SaveChangesAsync();
+
+
                 if (productionRole.EpisodeId != null)
                 {
-                    var castCrewMember = await MyMDBService.GetCastCrewMemberById(productionRole.CastCrewMemberId);
-                    var episode = await MyMDBService.GetEpisodeById(productionRole.EpisodeId.Value);
-                    episode.CastCrewMembers.Add(castCrewMember);
+                    var episode = await TVService.GetEpisodeById(productionRole.EpisodeId.Value);
+                    episode.ProductionRoles.Add(productionRole);
                     _context.Episodes.Update(episode);
                     await _context.SaveChangesAsync();
                 }
 
                 if (productionRole.MovieId != null)
                 {
-                    var castCrewMember = await MyMDBService.GetCastCrewMemberById(productionRole.CastCrewMemberId);
-                    var movie = await MyMDBService.GetMovieById(productionRole.MovieId.Value);
-                    movie.CastCrewMembers.Add(castCrewMember);
+                    var movie = await MovieService.GetMovieById(productionRole.MovieId.Value);
+                    movie.ProductionRoles.Add(productionRole);
                     _context.Movies.Update(movie);
                     await _context.SaveChangesAsync();
                 }
 
-                productionRole.Created = DateTime.Now.ToLocalTime();
-                _context.Add(productionRole);
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             
@@ -98,7 +107,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
+            var productionRole = await JobService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
@@ -150,7 +159,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var productionRole = await MyMDBService.GetProductionRoleById(id.Value);
+            var productionRole = await JobService.GetProductionRoleById(id.Value);
             if (productionRole == null)
             {
                 return NotFound();
@@ -164,7 +173,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var productionRole = await MyMDBService.GetProductionRoleById(id);
+            var productionRole = await JobService.GetProductionRoleById(id);
             _context.ProductionRoles.Remove(productionRole);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -3,7 +3,7 @@
     <label asp-for="TVShowId">TV Show</label>
     <select class="form-control os-dropdown" asp-for="TVShowId">
         <option value=""></option>
-        @foreach (var item in await MyMDBService.GetAllTVShows())
+        @foreach (var item in await TVService.GetAllTVShows())
         {
             <option value="@item.Id">@item.Name</option>
         }

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    var prodRoles = await JobService.GetProductionRolesByCharacterId(Model.Id);
 }
 
 <h1>Details</h1>
@@ -10,6 +11,15 @@
     <h4>Character</h4>
     <hr />
     @Html.EditorForModel()
+    <ul>
+        @foreach (var item in prodRoles)
+       {
+           <li>
+               @(item.MovieId != null ? $"{item?.Movie?.Name} - {item?.CastCrewMember?.Name}" 
+               : $"{item?.Episode?.TVShow?.Name} - {item?.CastCrewMember?.Name}" )
+           </li>
+       }
+    </ul>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

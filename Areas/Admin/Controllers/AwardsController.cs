@@ -17,12 +17,15 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IAwardService AwardService { get; }
 
         public AwardsController(ApplicationDbContext context, 
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IAwardService awardService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            AwardService = awardService;
         }
 
         // GET: Admin/Awards
@@ -39,7 +42,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var award = await MyMDBService.GetAwardById(id.Value);
+            var award = await AwardService.GetAwardById(id.Value);
             if (award == null)
             {
                 return NotFound();
@@ -79,7 +82,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var award = await MyMDBService.GetAwardById(id.Value);
+            var award = await AwardService.GetAwardById(id.Value);
             if (award == null)
             {
                 return NotFound();
@@ -131,7 +134,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var award = await MyMDBService.GetAwardById(id.Value);
+            var award = await AwardService.GetAwardById(id.Value);
             if (award == null)
             {
                 return NotFound();
@@ -145,7 +148,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var award = await MyMDBService.GetAwardById(id);
+            var award = await AwardService.GetAwardById(id);
             _context.Awards.Remove(award);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

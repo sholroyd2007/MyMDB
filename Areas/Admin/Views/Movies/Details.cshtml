@@ -10,16 +10,26 @@
     <h4>Movie</h4>
     <div class="row">
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        <button type="button" class="btn btn-primary mx-1" data-toggle="modal" data-target="#Series">
             Add To Movie Series
         </button>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary mx-1" data-toggle="modal" data-target="#Genre">
+            Add Movie Genre
+        </button>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary mx-1" data-toggle="modal" data-target="#Media">
+            Add Media File
+        </button>
+
+        <!-- Series Modal -->
+        <div class="modal fade" id="Series" tabindex="-1" role="dialog" aria-labelledby="SeriesLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <h5 class="modal-title" id="SeriesLabel">Add To Series</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -30,7 +40,7 @@
                                 <label name="movieSeriesId">Movie Series</label>
                                 <select class="form-control os-dropdown" name="movieSeriesId" id="movieSeriesId">
                                     <option value=""></option>
-                                    @foreach (var item in await MyMDBService.GetAllMovieSeries())
+                                    @foreach (var item in await MovieService.GetAllMovieSeries())
                                     {
                                         <option value="@item.Id">@item.Name</option>
                                     }
@@ -45,12 +55,82 @@
                 </div>
             </div>
         </div>
+
+        <!-- Genre Modal -->
+        <div class="modal fade" id="Genre" tabindex="-1" role="dialog" aria-labelledby="GenreLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="GenreLabel">Add Genre</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" asp-action="AddGenre" asp-route-id="@Model.Id">
+                            <div class="form-group">
+                                <label name="genreId">Genre</label>
+                                <select class="form-control os-dropdown" name="genreId" id="genreId">
+                                    <option value=""></option>
+                                    @foreach (var item in await MyMDBService.GetAllGenres())
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Media File Modal -->
+        <div class="modal fade" id="Media" tabindex="-1" role="dialog" aria-labelledby="MediaLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="MediaLabel">Add Media File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data" asp-action="AddMediaFiles">
+                            <div class="form-group">
+                                <input type="hidden" id="movieId" name="movieId" value="@Model.Id" />
+                                <label for="file">Upload Image</label>
+                                <div class="col-sm-8 col-md-6 mb-3">
+                                    <input type="file"
+                                           id="files"
+                                           name="files"
+                                           AllowMultiple="true"
+                                           multiple="multiple"
+                                           accept="image/png, image/jpeg, image/gif"
+                                           class="form-control">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <hr />
     <ul>
-        @foreach (var item in Model.CastCrewMembers)
+        @foreach (var item in Model.Genres)
         {
-            <li>@item.Name</li>
+            <li>
+                @item.Name | <a class="text-danger" asp-action="DeleteGenreFromMovie" asp-controller="Movies" asp-area="Admin"
+                            asp-route-genreId="@item.Id" asp-route-movieId="@Model.Id">Delete</a>
+            </li>
         }
     </ul>
     @Html.EditorForModel()
@@ -74,7 +154,7 @@
                     <tr>
                         <td>@item.Award.Name</td>
                         <td>@item.AwardCategory.Name</td>
-                        @if(item.CastCrewMemberId != null)
+                        @if (item.CastCrewMemberId != null)
                         {
                             <td>@item.CastCrewMember.Name</td>
                         }
@@ -85,6 +165,16 @@
             </tbody>
         </table>
     }
+
+    <div class="row">
+        @foreach (var file in Model.MediaFiles)
+        {
+            <div class="col-3">
+                <img class="img-fluid" src="data:@file.ContentType;base64, @Convert.ToBase64String(file.Data)" alt="Document" />
+            </div>
+        }
+
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

@@ -40,7 +40,7 @@
     <label asp-for="MovieStudioId">Movie Studios</label>
     <select class="form-control os-dropdown" asp-for="MovieStudioId">
         <option value=""></option>
-        @foreach (var item in await MyMDBService.GetAllMovieStudios())
+        @foreach (var item in await MovieService.GetAllMovieStudios())
         {
             <option value="@item.Id">@item.Name</option>
         }

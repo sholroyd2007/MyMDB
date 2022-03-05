@@ -17,18 +17,21 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public ITVService TVService { get; }
 
         public EpisodesController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            ITVService tVService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            TVService = tVService;
         }
 
         // GET: Admin/Episodes
         public async Task<IActionResult> Index()
         {
-            return View(await MyMDBService.GetAllEpisodes());
+            return View(await TVService.GetAllEpisodes());
         }
 
         // GET: Admin/Episodes/Details/5
@@ -39,7 +42,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var episode = await MyMDBService.GetEpisodeById(id.Value);
+            var episode = await TVService.GetEpisodeById(id.Value);
             if (episode == null)
             {
                 return NotFound();
@@ -67,7 +70,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 _context.Add(episode);
                 await _context.SaveChangesAsync();
 
-                var tvShow = await MyMDBService.GetTVShowById(episode.TVShowId);
+                var tvShow = await TVService.GetTVShowById(episode.TVShowId);
                 tvShow.Episodes.Add(episode);
                 _context.TVShows.Update(tvShow);
                 await _context.SaveChangesAsync();
@@ -85,7 +88,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var episode = await MyMDBService.GetEpisodeById(id.Value);
+            var episode = await TVService.GetEpisodeById(id.Value);
             if (episode == null)
             {
                 return NotFound();
@@ -137,7 +140,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var episode = await MyMDBService.GetEpisodeById(id.Value);
+            var episode = await TVService.GetEpisodeById(id.Value);
             if (episode == null)
             {
                 return NotFound();
@@ -151,7 +154,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var episode = await MyMDBService.GetEpisodeById(id);
+            var episode = await TVService.GetEpisodeById(id);
             _context.Episodes.Remove(episode);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

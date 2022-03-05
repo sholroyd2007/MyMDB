@@ -17,18 +17,30 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IAwardService AwardService { get; }
+        public ITVService TVService { get; }
+        public IMovieService MovieService { get; }
+        public IJobService JobService { get; }
 
         public AwardRecipientsController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IAwardService awardService,
+            ITVService tVService,
+            IMovieService movieService,
+            IJobService jobService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            AwardService = awardService;
+            TVService = tVService;
+            MovieService = movieService;
+            JobService = jobService;
         }
 
         // GET: Admin/AwardRecipients
         public async Task<IActionResult> Index()
         {
-            var recipients = await MyMDBService.GetAllAwardRecipients();
+            var recipients = await AwardService.GetAllAwardRecipients();
             return View(recipients);
         }
 
@@ -40,7 +52,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awardRecipient = await MyMDBService.GetAwardRecipientById(id.Value);
+            var awardRecipient = await AwardService.GetAwardRecipientById(id.Value);
             if (awardRecipient == null)
             {
                 return NotFound();
@@ -66,28 +78,28 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 if (awardRecipient.CastCrewMemberId != null)
                 {
-                    var castCrew = await MyMDBService.GetCastCrewMemberById(awardRecipient.CastCrewMemberId.Value);
+                    var castCrew = await JobService.GetCastCrewMemberById(awardRecipient.CastCrewMemberId.Value);
                     castCrew.AwardRecipients.Add(awardRecipient);
                     _context.Update(castCrew);
                 }
 
                 if (awardRecipient.MovieId != null)
                 {
-                    var movie = await MyMDBService.GetMovieById(awardRecipient.MovieId.Value);
+                    var movie = await MovieService.GetMovieById(awardRecipient.MovieId.Value);
                     movie.AwardRecipients.Add(awardRecipient);
                     _context.Update(movie);
                 }
 
                 if (awardRecipient.EpisodeId != null)
                 {
-                    var episode = await MyMDBService.GetEpisodeById(awardRecipient.EpisodeId.Value);
+                    var episode = await TVService.GetEpisodeById(awardRecipient.EpisodeId.Value);
                     episode.AwardRecipients.Add(awardRecipient);
                     _context.Update(episode);
                 }
 
                 if (awardRecipient.TVShowId != null)
                 {
-                    var tvShow = await MyMDBService.GetTVShowById(awardRecipient.TVShowId.Value);
+                    var tvShow = await TVService.GetTVShowById(awardRecipient.TVShowId.Value);
                     tvShow.AwardRecipients.Add(awardRecipient);
                     _context.Update(tvShow);
                 }
@@ -108,7 +120,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awardRecipient = await MyMDBService.GetAwardRecipientById(id.Value);
+            var awardRecipient = await AwardService.GetAwardRecipientById(id.Value);
             if (awardRecipient == null)
             {
                 return NotFound();
@@ -160,7 +172,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awardRecipient = await MyMDBService.GetAwardRecipientById(id.Value);
+            var awardRecipient = await AwardService.GetAwardRecipientById(id.Value);
             if (awardRecipient == null)
             {
                 return NotFound();
@@ -174,7 +186,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var awardRecipient = await MyMDBService.GetAwardRecipientById(id);
+            var awardRecipient = await AwardService.GetAwardRecipientById(id);
             _context.ActorAwards.Remove(awardRecipient);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

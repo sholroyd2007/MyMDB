@@ -17,18 +17,21 @@ namespace MyMDB.Areas.Admin
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IAwardService AwardService { get; }
 
         public AwardCategoriesController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IAwardService awardService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            AwardService = awardService;
         }
 
         // GET: Admin/AwardCategories
         public async Task<IActionResult> Index()
         {
-            return View(await MyMDBService.GetAllAwardCategories());
+            return View(await AwardService.GetAllAwardCategories());
         }
 
         // GET: Admin/AwardCategories/Details/5
@@ -39,7 +42,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var awardCategory = await MyMDBService.GetAwardCategoryById(id.Value);
+            var awardCategory = await AwardService.GetAwardCategoryById(id.Value);
             if (awardCategory == null)
             {
                 return NotFound();
@@ -79,7 +82,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var awardCategory = await MyMDBService.GetAwardCategoryById(id.Value);
+            var awardCategory = await AwardService.GetAwardCategoryById(id.Value);
             if (awardCategory == null)
             {
                 return NotFound();
@@ -131,7 +134,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var awardCategory = await MyMDBService.GetAwardCategoryById(id.Value);
+            var awardCategory = await AwardService.GetAwardCategoryById(id.Value);
             if (awardCategory == null)
             {
                 return NotFound();
@@ -145,7 +148,7 @@ namespace MyMDB.Areas.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var awardCategory = await MyMDBService.GetAwardCategoryById(id);
+            var awardCategory = await AwardService.GetAwardCategoryById(id);
             _context.AwardCategories.Remove(awardCategory);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

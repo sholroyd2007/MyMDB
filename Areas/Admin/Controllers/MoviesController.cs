@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
 using MyMDB.Services;
+using MyMDd;
 
 namespace MyMDB.Areas.Admin.Controllers
 {
@@ -17,18 +18,21 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IMovieService MovieService { get; }
 
         public MoviesController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IMovieService movieService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            MovieService = movieService;
         }
 
         // GET: Admin/Movies
         public async Task<IActionResult> Index()
         {
-            return View(await MyMDBService.GetAllMovies());
+            return View(await MovieService.GetAllMovies());
         }
 
         // GET: Admin/Movies/Details/5
@@ -39,7 +43,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movie = await MyMDBService.GetMovieById(id.Value);
+            var movie = await MovieService.GetMovieById(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -79,7 +83,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movie = await MyMDBService.GetMovieById(id.Value);
+            var movie = await MovieService.GetMovieById(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -131,7 +135,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movie = await MyMDBService.GetMovieById(id.Value);
+            var movie = await MovieService.GetMovieById(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -145,7 +149,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var movie = await MyMDBService.GetMovieById(id);
+            var movie = await MovieService.GetMovieById(id);
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -159,13 +163,64 @@ namespace MyMDB.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMovieToSeries(int id)
         {
-            var movie = await MyMDBService.GetMovieById(id);
+            var movie = await MovieService.GetMovieById(id);
             var seriesId = Int32.Parse(Request.Form["movieSeriesId"]);
-            var movieSeries = await MyMDBService.GetMovieSeriesById(seriesId);
+            var movieSeries = await MovieService.GetMovieSeriesById(seriesId);
             movieSeries.Movies.Add(movie);
             _context.MovieSeries.Update(movieSeries);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { controller = "Movies", id = id });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddGenre(int id)
+        {
+            var movie = await MovieService.GetMovieById(id);
+            var genreId = Int32.Parse(Request.Form["genreId"]);
+            var genre = await MyMDBService.GetGenreById(genreId);
+            movie.Genres.Add(genre);
+            _context.Movies.Update(movie);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { controller = "Movies", id = id });
+        }
+
+        public async Task<IActionResult> DeleteGenreFromMovie(int movieId, int genreId)
+        {
+            var movie = await MovieService.GetMovieById(movieId);
+            var genre = await MyMDBService.GetGenreById(genreId);
+
+            movie.Genres.Remove(genre);
+            _context.Movies.Update(movie);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { controller = "Movies", id = movieId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddMediaFiles()
+        {
+            var movieId = int.Parse(HttpContext.Request.Form["movieId"]);
+            var movie = await MovieService.GetMovieById(movieId);
+            var files = Request.Form.Files;
+            foreach (var file in files)
+            {
+                if (file != null)
+                {
+                    var mediaFile = new MediaFile();
+
+                    mediaFile.Data = file.OpenReadStream().ReadFully();
+                    mediaFile.ContentType = file.ContentType;
+                    mediaFile.Created = DateTime.Now.ToLocalTime();
+                    mediaFile.MovieId = movie.Id;
+
+                    _context.Add(mediaFile);
+                    movie.MediaFiles.Add(mediaFile);
+                    await _context.SaveChangesAsync();
+                }
+
+            }
+
+            return RedirectToAction(nameof(Details), new { controller = "Movies", id = movieId });
         }
     }
 }

@@ -17,18 +17,21 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public ITVService TVService { get; }
 
         public TVShowsController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            ITVService tVService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            TVService = tVService;
         }
 
         // GET: Admin/TVShows
         public async Task<IActionResult> Index()
         {
-            return View(await MyMDBService.GetAllTVShows());
+            return View(await TVService.GetAllTVShows());
         }
 
         // GET: Admin/TVShows/Details/5
@@ -39,7 +42,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var tVShow = await MyMDBService.GetTVShowById(id.Value);
+            var tVShow = await TVService.GetTVShowById(id.Value);
             if (tVShow == null)
             {
                 return NotFound();
@@ -79,7 +82,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var tVShow = await MyMDBService.GetTVShowById(id.Value);
+            var tVShow = await TVService.GetTVShowById(id.Value);
             if (tVShow == null)
             {
                 return NotFound();
@@ -131,7 +134,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var tVShow = await MyMDBService.GetTVShowById(id.Value);
+            var tVShow = await TVService.GetTVShowById(id.Value);
             if (tVShow == null)
             {
                 return NotFound();
@@ -145,7 +148,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tVShow = await MyMDBService.GetTVShowById(id);
+            var tVShow = await TVService.GetTVShowById(id);
             _context.TVShows.Remove(tVShow);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

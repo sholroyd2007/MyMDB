@@ -11,7 +11,7 @@ namespace MyMDB.Models
         
         public DateTime? Release { get; set; }
         
-        public List<CastCrewMember> CastCrewMembers { get; set; }
+        public List<ProductionRole> ProductionRoles { get; set; }
         
         public List<Genre> Genres { get; set; }
         
@@ -25,7 +25,7 @@ namespace MyMDB.Models
 
         public Movie()
         {
-            CastCrewMembers = new List<CastCrewMember>();
+            ProductionRoles = new List<ProductionRole>();
             Genres = new List<Genre>();
             Ratings = new List<Rating>();
         }

@@ -18,18 +18,33 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IMediaService MediaService { get; }
+        public IJobService JobService { get; }
+        public ITVService TVService { get; }
+        public IMovieService MovieService { get; }
+        public IAwardService AwardService { get; }
 
         public MediaFilesController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IMediaService mediaService,
+            IJobService jobService,
+            ITVService tVService,
+            IMovieService movieService,
+            IAwardService awardService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            MediaService = mediaService;
+            JobService = jobService;
+            TVService = tVService;
+            MovieService = movieService;
+            AwardService = awardService;
         }
 
         // GET: Admin/MediaFiles
         public async Task<IActionResult> Index()
         {
-            return View(await MyMDBService.GetAllMediaFiles());
+            return View(await MediaService.GetAllMediaFiles());
         }
 
         // GET: Admin/MediaFiles/Details/5
@@ -40,7 +55,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var mediaFile = await MyMDBService.GetMediaFileById(id.Value);
+            var mediaFile = await MediaService.GetMediaFileById(id.Value);
             if (mediaFile == null)
             {
                 return NotFound();
@@ -77,7 +92,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.MovieId != null)
                 {
-                    var movie = await MyMDBService.GetMovieById(mediaFile.MovieId.Value);
+                    var movie = await MovieService.GetMovieById(mediaFile.MovieId.Value);
                     movie.MediaFiles.Add(mediaFile);
                     _context.Movies.Update(movie);
                     await _context.SaveChangesAsync();
@@ -85,7 +100,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.CastCrewMemberId != null)
                 {
-                    var castCrewMember = await MyMDBService.GetCastCrewMemberById(mediaFile.CastCrewMemberId.Value);
+                    var castCrewMember = await JobService.GetCastCrewMemberById(mediaFile.CastCrewMemberId.Value);
                     castCrewMember.MediaFiles.Add(mediaFile);
                     _context.CastCrewMember.Update(castCrewMember);
                     await _context.SaveChangesAsync();
@@ -93,7 +108,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.CharacterId != null)
                 {
-                    var character = await MyMDBService.GetCharacterById(mediaFile.CharacterId.Value);
+                    var character = await JobService.GetCharacterById(mediaFile.CharacterId.Value);
                     character.MediaFiles.Add(mediaFile);
                     _context.Characters.Update(character);
                     await _context.SaveChangesAsync();
@@ -101,7 +116,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.TVShowId != null)
                 {
-                    var tvShow = await MyMDBService.GetTVShowById(mediaFile.TVShowId.Value);
+                    var tvShow = await TVService.GetTVShowById(mediaFile.TVShowId.Value);
                     tvShow.MediaFiles.Add(mediaFile);
                     _context.TVShows.Update(tvShow);
                     await _context.SaveChangesAsync();
@@ -109,7 +124,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.EpisodeId != null)
                 {
-                    var episode = await MyMDBService.GetEpisodeById(mediaFile.EpisodeId.Value);
+                    var episode = await TVService.GetEpisodeById(mediaFile.EpisodeId.Value);
                     episode.MediaFiles.Add(mediaFile);
                     _context.Episodes.Update(episode);
                     await _context.SaveChangesAsync();
@@ -117,7 +132,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.AwardId != null)
                 {
-                    var award = await MyMDBService.GetAwardById(mediaFile.AwardId.Value);
+                    var award = await AwardService.GetAwardById(mediaFile.AwardId.Value);
                     award.MediaFiles.Add(mediaFile);
                     _context.Awards.Update(award);
                     await _context.SaveChangesAsync();
@@ -133,7 +148,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.MovieSeriesId != null)
                 {
-                    var series = await MyMDBService.GetMovieSeriesById(mediaFile.MovieSeriesId.Value);
+                    var series = await MovieService.GetMovieSeriesById(mediaFile.MovieSeriesId.Value);
                     series.MediaFiles.Add(mediaFile);
                     _context.MovieSeries.Update(series);
                     await _context.SaveChangesAsync();
@@ -141,7 +156,7 @@ namespace MyMDB.Areas.Admin.Controllers
 
                 if (mediaFile.MovieStudioId != null)
                 {
-                    var studio = await MyMDBService.GetMovieStudioById(mediaFile.MovieStudioId.Value);
+                    var studio = await MovieService.GetMovieStudioById(mediaFile.MovieStudioId.Value);
                     studio.MediaFiles.Add(mediaFile);
                     _context.MovieStudios.Update(studio);
                     await _context.SaveChangesAsync();
@@ -161,7 +176,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var mediaFile = await MyMDBService.GetMediaFileById(id.Value);
+            var mediaFile = await MediaService.GetMediaFileById(id.Value);
             if (mediaFile == null)
             {
                 return NotFound();
@@ -221,7 +236,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var mediaFile = await MyMDBService.GetMediaFileById(id.Value);
+            var mediaFile = await MediaService.GetMediaFileById(id.Value);
             if (mediaFile == null)
             {
                 return NotFound();
@@ -235,7 +250,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var mediaFile = await MyMDBService.GetMediaFileById(id);
+            var mediaFile = await MediaService.GetMediaFileById(id);
             _context.MediaFiles.Remove(mediaFile);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -15,18 +15,21 @@ namespace MyMDB.Areas.Admin
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IJobService JobService { get; }
 
         public JobRolesController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IJobService jobService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            JobService = jobService;
         }
 
         // GET: Admin/JobRoles
         public async Task<IActionResult> Index()
         {
-            return View(await MyMDBService.GetAllJobRoles());
+            return View(await JobService.GetAllJobRoles());
         }
 
         // GET: Admin/JobRoles/Details/5
@@ -37,7 +40,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var awardCategory = await MyMDBService.GetJobRoleById(id.Value);
+            var awardCategory = await JobService.GetJobRoleById(id.Value);
             if (awardCategory == null)
             {
                 return NotFound();
@@ -77,7 +80,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var jobRole = await MyMDBService.GetJobRoleById(id.Value);
+            var jobRole = await JobService.GetJobRoleById(id.Value);
             if (jobRole == null)
             {
                 return NotFound();
@@ -129,7 +132,7 @@ namespace MyMDB.Areas.Admin
                 return NotFound();
             }
 
-            var jobRole = await MyMDBService.GetJobRoleById(id.Value);
+            var jobRole = await JobService.GetJobRoleById(id.Value);
             if (jobRole == null)
             {
                 return NotFound();
@@ -143,7 +146,7 @@ namespace MyMDB.Areas.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var jobRole = await MyMDBService.GetJobRoleById(id);
+            var jobRole = await JobService.GetJobRoleById(id);
             _context.JobRoles.Remove(jobRole);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

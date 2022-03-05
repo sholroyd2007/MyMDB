@@ -21,7 +21,7 @@
     <label asp-for="CastCrewMemberId">Cast/Crew Member</label>
     <select class="form-control os-dropdown" asp-for="CastCrewMemberId">
         <option value=""></option>
-        @foreach (var item in await MyMDBService.GetAllCastCrewMembers())
+        @foreach (var item in await JobService.GetAllCastCrewMembers())
         {
             <option value="@item.Id">@item.Name</option>
         }
@@ -32,7 +32,7 @@
     <label asp-for="EpisodeId">Episode</label>
     <select class="form-control os-dropdown" asp-for="EpisodeId">
         <option value=""></option>
-        @foreach (var item in await MyMDBService.GetAllEpisodes())
+        @foreach (var item in await TVService.GetAllEpisodes())
         {
             <option value="@item.Id">@item.Name</option>
         }
@@ -43,7 +43,7 @@
     <label asp-for="TVShowId">TV Show</label>
     <select class="form-control os-dropdown" asp-for="TVShowId">
         <option value=""></option>
-        @foreach (var item in await MyMDBService.GetAllTVShows())
+        @foreach (var item in await TVService.GetAllTVShows())
         {
             <option value="@item.Id">@item.Name</option>
         }
@@ -54,7 +54,7 @@
     <label asp-for="MovieId">Movie</label>
     <select class="form-control os-dropdown" asp-for="MovieId">
         <option value=""></option>
-        @foreach (var item in await MyMDBService.GetAllMovies())
+        @foreach (var item in await MovieService.GetAllMovies())
         {
             <option value="@item.Id">@item.Name</option>
         }

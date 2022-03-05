@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
-    var roles = await MyMDBService.GetProductionRolesByCastCrewMemberId(Model.Id);
+    var roles = await JobService.GetProductionRolesByCastCrewMemberId(Model.Id);
     var actingRoles = roles.Where(e => e.JobRole.Name == "Actor");
     var directingRoles = roles.Where(e => e.JobRole.Name == "Director");
     var producingRoles = roles.Where(e => e.JobRole.Name == "Producer");
@@ -32,13 +32,13 @@
                 {
                     <tr>
                         <td>
-                            @(item.MovieId != null ? ((await MyMDBService.GetMovieById(item.MovieId.Value)).Name)
-                    : ((await MyMDBService.GetTVShowById(item.Episode.TVShowId)).Name))
+                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Name)
+                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Name))
                         </td>
                         <td>@item.Character.Name</td>
                         <td>
-                            @(item.MovieId != null ? ((await MyMDBService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
-                    : ((await MyMDBService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
+                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
+                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
                         </td>
                     </tr>
                 }
@@ -60,12 +60,12 @@
                 {
                     <tr>
                         <td>
-                            @(item.MovieId != null ? ((await MyMDBService.GetMovieById(item.MovieId.Value)).Name)
-                    : ((await MyMDBService.GetTVShowById(item.Episode.TVShowId)).Name))
+                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Name)
+                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Name))
                         </td>
                         <td>
-                            @(item.MovieId != null ? ((await MyMDBService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
-                    : ((await MyMDBService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
+                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
+                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
                         </td>
                     </tr>
                 }
@@ -87,12 +87,12 @@
                 {
                     <tr>
                         <td>
-                            @(item.MovieId != null ? ((await MyMDBService.GetMovieById(item.MovieId.Value)).Name)
-                    : ((await MyMDBService.GetTVShowById(item.Episode.TVShowId)).Name))
+                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Name)
+                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Name))
                         </td>
                         <td>
-                            @(item.MovieId != null ? ((await MyMDBService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
-                    : ((await MyMDBService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
+                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
+                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
                         </td>
                     </tr>
                 }

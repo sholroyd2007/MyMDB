@@ -17,18 +17,21 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IJobService JobService { get; }
 
         public CharactersController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IJobService jobService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            JobService = jobService;
         }
 
         // GET: Admin/Characters
         public async Task<IActionResult> Index()
         {
-            var characters = await MyMDBService.GetAllCharacters();
+            var characters = await JobService.GetAllCharacters();
             return View(characters);
         }
 
@@ -40,7 +43,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var character = await MyMDBService.GetCharacterById(id.Value);
+            var character = await JobService.GetCharacterById(id.Value);
             if (character == null)
             {
                 return NotFound();
@@ -80,7 +83,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var character = await MyMDBService.GetCharacterById(id.Value);
+            var character = await JobService.GetCharacterById(id.Value);
             if (character == null)
             {
                 return NotFound();
@@ -132,7 +135,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var character = await MyMDBService.GetCharacterById(id.Value);
+            var character = await JobService.GetCharacterById(id.Value);
             if (character == null)
             {
                 return NotFound();
@@ -146,7 +149,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var character = await MyMDBService.GetCharacterById(id);
+            var character = await JobService.GetCharacterById(id);
             _context.Characters.Remove(character);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

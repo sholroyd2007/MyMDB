@@ -17,18 +17,21 @@ namespace MyMDB.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
 
         public IMyMDBService MyMDBService { get; }
+        public IMovieService MovieService { get; }
 
         public MovieStudiosController(ApplicationDbContext context,
-            IMyMDBService myMDBService)
+            IMyMDBService myMDBService,
+            IMovieService movieService)
         {
             _context = context;
             MyMDBService = myMDBService;
+            MovieService = movieService;
         }
 
         // GET: Admin/MovieStudios
         public async Task<IActionResult> Index()
         {
-            return View(await MyMDBService.GetAllMovieStudios());
+            return View(await MovieService.GetAllMovieStudios());
         }
 
         // GET: Admin/MovieStudios/Details/5
@@ -39,7 +42,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieStudio = await MyMDBService.GetMovieStudioById(id.Value);
+            var movieStudio = await MovieService.GetMovieStudioById(id.Value);
             if (movieStudio == null)
             {
                 return NotFound();
@@ -79,7 +82,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieStudio = await MyMDBService.GetMovieStudioById(id.Value);
+            var movieStudio = await MovieService.GetMovieStudioById(id.Value);
             if (movieStudio == null)
             {
                 return NotFound();
@@ -131,7 +134,7 @@ namespace MyMDB.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieStudio = await MyMDBService.GetMovieStudioById(id.Value);
+            var movieStudio = await MovieService.GetMovieStudioById(id.Value);
             if (movieStudio == null)
             {
                 return NotFound();
@@ -145,7 +148,7 @@ namespace MyMDB.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var movieStudio = await MyMDBService.GetMovieStudioById(id);
+            var movieStudio = await MovieService.GetMovieStudioById(id);
             _context.MovieStudios.Remove(movieStudio);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
