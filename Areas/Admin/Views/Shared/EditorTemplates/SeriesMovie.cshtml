@@ -1,0 +1,23 @@
+﻿@model SeriesMovie
+
+<div class="form-group">
+    <label asp-for="MovieId">Movie</label>
+    <select class="form-control" asp-for="MovieId" id="Movie">
+        <option value=""></option>
+        @foreach (var item in await MovieService.GetAllMovies())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="SeriesId">Movie Series</label>
+    <select class="form-control" asp-for="SeriesId">
+        <option value=""></option>
+        @foreach (var item in await MovieService.GetAllMovieSeries())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>

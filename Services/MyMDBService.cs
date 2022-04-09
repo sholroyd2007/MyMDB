@@ -16,7 +16,10 @@ namespace MyMDB.Services
         Task<FactType> GetFactTypeById(int id);
         Task<Rating> GetRatingById(int id);
         Task<Quote> GetQuoteById(int id);
+        Task<GenreLink> GetGenreLinkById(int id);
+        Task<GenreLink> GetGenreLinkById(int movieId, int genreId);
         Task<IEnumerable<Genre>> GetAllGenres();        
+        Task<IEnumerable<GenreLink>> GetAllGenreLinks();        
         Task<IEnumerable<Fact>> GetAllFacts();
         Task<IEnumerable<FactType>> GetAllFactTypes();
         Task<IEnumerable<Rating>> GetAllRatings();
@@ -44,6 +47,7 @@ namespace MyMDB.Services
         Task AddProductionRole(ProductionRole itemToAdd);
         Task AddJobRole(JobRole itemToAdd);
         Task AddCharacter(Character itemToAdd);
+        Task AddGenreLink(GenreLink itemToAdd);
 
         Task EditGenre(Genre itemToEdit);
         Task EditFact(Fact itemToEdit);
@@ -54,8 +58,10 @@ namespace MyMDB.Services
         Task EditProductionRole(ProductionRole itemToEdit);
         Task EditJobRole(JobRole itemToEdit);
         Task EditCharacter(Character itemToEdit);
+        Task EditGenreLink(GenreLink itemToEdit);
 
         Task DeleteGenre(int id);
+        Task DeleteGenreLink(int id);
         Task DeleteFact(int id);
         Task DeleteFactType(int id);
         Task DeleteRating(int id);
@@ -530,6 +536,57 @@ namespace MyMDB.Services
             itemToEdit.Edited = DateTime.UtcNow;
             DatabaseContext.Update(itemToEdit);
             await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task<GenreLink> GetGenreLinkById(int id)
+        {
+            return await DatabaseContext.GenreLink
+                            .AsNoTracking()
+                            .Include(e => e.TVShow)
+                            .Include(e => e.Movie)
+                            .Include(e => e.Genre)
+                            .FirstOrDefaultAsync(e => e.Id == id); 
+        }
+
+        public async Task<IEnumerable<GenreLink>> GetAllGenreLinks()
+        {
+            return await DatabaseContext.GenreLink
+                            .AsNoTracking()
+                            .Include(e=>e.TVShow)
+                            .Include(e=>e.Movie)
+                            .Include(e=>e.Genre)
+                            .Where(e => e.Deleted == false)
+                            .ToListAsync();
+        }
+
+        public async Task AddGenreLink(GenreLink itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditGenreLink(GenreLink itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteGenreLink(int id)
+        {
+            var item = await GetGenreLinkById(id);
+            DatabaseContext.Remove(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task<GenreLink> GetGenreLinkById(int movieId, int genreId)
+        {
+            var genreLink = await DatabaseContext.GenreLink
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.MovieId == movieId 
+                && e.GenreId == genreId);
+            return genreLink;
         }
     }
 }

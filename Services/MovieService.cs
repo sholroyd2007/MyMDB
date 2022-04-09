@@ -13,24 +13,33 @@ namespace MyMDB.Services
         Task<Movie> GetMovieById(int id);
         Task<MovieSeries> GetMovieSeriesById(int id);
         Task<MovieStudio> GetMovieStudioById(int id);
+        Task<SeriesMovie> GetSeriesMovieById(int id);
+        Task<SeriesMovie> GetSeriesMovieById(int movieId, int seriesId);
         Task<IEnumerable<Movie>> GetAllMovies();
+        Task<IEnumerable<SeriesMovie>> GetAllSeriesMovies();
         Task<IEnumerable<MovieSeries>> GetAllMovieSeries();
         Task<IEnumerable<MovieStudio>> GetAllMovieStudios();
         Task<IEnumerable<Movie>> GetMoviesByGenre(int id);
         Task<IEnumerable<Movie>> GetMoviesByMovieSeries(int id);
         Task<IEnumerable<Movie>> GetMoviesByMovieStudio(int id);
 
+        Task<MovieSeries> GetMovieSeriesByMovieId(int id);
+        Task<IEnumerable<Genre>> GetMovieGenres(int id);
+
         Task AddMovie(Movie itemToAdd);
         Task AddMovieSeries(MovieSeries itemToAdd);
         Task AddMovieStudio(MovieStudio itemToAdd);
+        Task AddSeriesMovie(SeriesMovie itemToAdd);
 
         Task EditMovie(Movie itemToEdit);
         Task EditMovieSeries(MovieSeries itemToEdit);
         Task EditMovieStudio(MovieStudio itemToEdit);
+        Task EditSeriesMovie(SeriesMovie itemToEdit);
 
         Task DeleteMovie(int id);
         Task DeleteMovieSeries(int id);
         Task DeleteMovieStudio(int id);
+        Task DeleteSeriesMovie(int id);
     }
 
     public class MovieService : IMovieService
@@ -45,9 +54,9 @@ namespace MyMDB.Services
 
         public async Task<Movie> GetMovieById(int id)
         {
-            var movie = await DatabaseContext.Movies             
+            var movie = await DatabaseContext.Movies
+                .AsNoTracking()
                 .Include(e => e.MovieStudio)
-                .Include(e => e.Genres)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return movie;
         }
@@ -55,7 +64,6 @@ namespace MyMDB.Services
         public async Task<MovieSeries> GetMovieSeriesById(int id)
         {
             var x = await DatabaseContext.MovieSeries
-                .Include(e => e.Movies)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
             return x;
@@ -102,26 +110,33 @@ namespace MyMDB.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
 
+            var genreLinks = await DatabaseContext.GenreLink
+                .AsNoTracking()
+                .Include(e => e.Genre)
+                .Include(e => e.Movie)
+                .Where(e => e.GenreId == genre.Id && e.Deleted == false)
+                .ToListAsync();
+
             var movies = new List<Movie>();
-            foreach (var movie in await GetAllMovies())
+            foreach (var item in genreLinks)
             {
-                foreach (var g in movie.Genres)
-                {
-                    if (g == genre)
-                    {
-                        movies.Add(movie);
-                    }
-                }
+                movies.Add(item.Movie);
             }
             return movies;
         }
 
         public async Task<IEnumerable<Movie>> GetMoviesByMovieSeries(int id)
         {
-            var movieSeries = await DatabaseContext.MovieSeries
-                .AsNoTracking()
-                .FirstOrDefaultAsync(e => e.Id == id);
-            return movieSeries.Movies;
+            var series = await GetMovieSeriesById(id);
+            var allSeriesMovies = await GetAllSeriesMovies();
+            var seriesMovies = allSeriesMovies.Where(e => e.SeriesId == series.Id && e.Deleted == false);
+            var movies = new List<Movie>();
+            foreach(var item in seriesMovies)
+            {
+                movies.Add(item.Movie);
+            }
+            return movies;
+
         }
 
         public async Task<IEnumerable<Movie>> GetMoviesByMovieStudio(int id)
@@ -198,6 +213,81 @@ namespace MyMDB.Services
             itemToEdit.Edited = DateTime.UtcNow;
             DatabaseContext.Update(itemToEdit);
             await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task<MovieSeries> GetMovieSeriesByMovieId(int id)
+        {
+            var movie = await GetMovieById(id);
+            var seriesMovie = await DatabaseContext.SeriesMovie.AsNoTracking()
+                .Include(e=>e.Series)
+                .Include(e=>e.Movie)
+                .FirstOrDefaultAsync(e=>e.MovieId == movie.Id && e.Deleted == false);
+            if(seriesMovie != null)
+            {
+                return seriesMovie.Series;
+            }
+            return null;
+            
+
+        }
+
+        public async Task AddSeriesMovie(SeriesMovie itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditSeriesMovie(SeriesMovie itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteSeriesMovie(int id)
+        {
+            var item = await GetSeriesMovieById(id);
+            DatabaseContext.Remove(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task<SeriesMovie> GetSeriesMovieById(int id)
+        {
+            return await DatabaseContext.SeriesMovie
+                .AsNoTracking()
+                .Include(e=>e.Movie)
+                .Include(e=>e.Series)
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public async Task<IEnumerable<SeriesMovie>> GetAllSeriesMovies()
+        {
+            return await DatabaseContext.SeriesMovie
+                .AsNoTracking()
+                .Include(e => e.Movie)
+                .Include(e => e.Series)
+                .Where(e=>e.Deleted == false)
+                .ToListAsync();
+        }
+
+        public async Task<SeriesMovie> GetSeriesMovieById(int movieId, int seriesId)
+        {
+            var seriesMovie = await DatabaseContext.SeriesMovie
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.MovieId == movieId && e.SeriesId == seriesId);
+            return seriesMovie;
+        }
+
+        public async Task<IEnumerable<Genre>> GetMovieGenres(int id)
+        {
+            var movie = await GetMovieById(id);
+            var genres = await DatabaseContext.GenreLink
+                .AsNoTracking()
+                .Where(e => e.MovieId == movie.Id)
+                .Select(e => e.Genre)
+                .ToListAsync();
+            return genres;
         }
     }
 }

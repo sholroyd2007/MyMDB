@@ -91,14 +91,14 @@ namespace MyMDB.Services
         {
             var castCrewMember = await DatabaseContext.CastCrewMember.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
             var allMediaFiles = await GetAllMediaFiles();
-            return allMediaFiles.Where(e => e.CastCrewMembers.Contains(castCrewMember));
+            return allMediaFiles.Where(e => e.CastCrewMembers.Any(e=>e.Id == castCrewMember.Id));
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByCharacterId(int id)
         {
             var character = await DatabaseContext.Characters.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
             var allMediaFiles = await GetAllMediaFiles();
-            return allMediaFiles.Where(e => e.Characters.Contains(character));
+            return allMediaFiles.Where(e => e.Characters.Any(e => e.Id == character.Id));
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByAwardId(int id)

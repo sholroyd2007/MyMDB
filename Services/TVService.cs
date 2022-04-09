@@ -49,22 +49,7 @@ namespace MyMDB.Services
 
         public async Task<IEnumerable<TVShow>> GetTVShowsByGenre(int id)
         {
-            var genre = await DatabaseContext.Genres
-                .AsNoTracking()
-                .FirstOrDefaultAsync(e => e.Id == id);
-
-            var tvShows = new List<TVShow>();
-            foreach (var show in await GetAllTVShows())
-            {
-                foreach (var g in show.Genres)
-                {
-                    if (g == genre)
-                    {
-                        tvShows.Add(show);
-                    }
-                }
-            }
-            return tvShows;
+            throw new NotImplementedException();
         }
 
         public async Task<TVShow> GetTVShowById(int id)

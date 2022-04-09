@@ -11,9 +11,7 @@ namespace MyMDB.Models
         public double? Budget { get; set; }
         
         public DateTime? Release { get; set; }
-               
-        public Collection<Genre> Genres { get; set; }
-             
+                            
         public string Tagline { get; set; }
 
         public MovieStudio MovieStudio { get; set; }

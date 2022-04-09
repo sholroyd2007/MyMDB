@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Details";
+    var series = await MovieService.GetMovieSeriesByMovieId(Model.Id);
+    var genres = await MovieService.GetMovieGenres(Model.Id);
 }
 
 <h1>Details</h1>
@@ -35,10 +37,11 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" asp-action="AddMovieToSeries" asp-route-id="@Model.Id">
+                        <form method="post" asp-action="AddMovieToSeries">
+                            <input type="hidden" name="movieId" type="number" value="@Model.Id" />
                             <div class="form-group">
                                 <label name="movieSeriesId">Movie Series</label>
-                                <select class="form-control os-dropdown" name="movieSeriesId" id="movieSeriesId">
+                                <select class="form-control" type="number" name="seriesId" id="seriesId">
                                     <option value=""></option>
                                     @foreach (var item in await MovieService.GetAllMovieSeries())
                                     {
@@ -67,10 +70,11 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form method="post" asp-action="AddGenre" asp-route-id="@Model.Id">
+                        <form method="post" asp-action="AddGenreToMovie">
+                            <input type="hidden" name="movieId" value="@Model.Id" />
                             <div class="form-group">
                                 <label name="genreId">Genre</label>
-                                <select class="form-control os-dropdown" name="genreId" id="genreId">
+                                <select class="form-control" name="genreId" id="genreId">
                                     <option value=""></option>
                                     @foreach (var item in await MyMDBService.GetAllGenres())
                                     {
@@ -124,8 +128,17 @@
         </div>
     </div>
     <hr />
-    <ul>
-        @foreach (var item in Model.Genres)
+    @if (series != null)
+    {
+        <h5>Series</h5>
+        <p>@series.Name | <a class="text-danger" asp-action="DeleteMovieFromSeries" asp-controller="Movies" asp-area="Admin"
+                            asp-route-seriesId="@series.Id" asp-route-movieId="@Model.Id">Delete</a></p>
+    }
+    @if (genres.Any())
+    {
+        <h5>Genres</h5>
+        <ul>
+        @foreach (var item in genres)
         {
             <li>
                 @item.Name | <a class="text-danger" asp-action="DeleteGenreFromMovie" asp-controller="Movies" asp-area="Admin"
@@ -133,6 +146,8 @@
             </li>
         }
     </ul>
+    }
+    
     @Html.EditorForModel()
     <hr />
 </div>

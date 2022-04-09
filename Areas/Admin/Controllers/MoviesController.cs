@@ -155,41 +155,45 @@ namespace MyMDB.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMovieToSeries(int id)
+        public async Task<IActionResult> AddMovieToSeries([FromForm]int movieId, [FromForm]int seriesId)
         {
-            var movie = await MovieService.GetMovieById(id);
-            var seriesId = Int32.Parse(Request.Form["movieSeriesId"]);
+            var movie = await MovieService.GetMovieById(movieId);
             var movieSeries = await MovieService.GetMovieSeriesById(seriesId);
-            movieSeries.Movies.Add(movie);
-            DatabaseContext.MovieSeries.Update(movieSeries);
-            await DatabaseContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { controller = "Movies", id = id });
+            var seriesMovie = new SeriesMovie();
+            seriesMovie.MovieId = movie.Id;
+            seriesMovie.SeriesId = movieSeries.Id;
+            await MovieService.AddSeriesMovie(seriesMovie);
+            return RedirectToAction(nameof(Details), new { controller = "Movies", id = movieId });
+        }
+
+        public async Task<IActionResult> DeleteMovieFromSeries(int movieId, int seriesId)
+        {
+            var movie = await MovieService.GetMovieById(movieId);
+            var movieSeries = await MovieService.GetMovieSeriesById(seriesId);
+            var seriesMovie = await MovieService.GetSeriesMovieById(movie.Id, movieSeries.Id);
+            await MovieService.DeleteSeriesMovie(seriesMovie.Id);
+            return RedirectToAction(nameof(Details), new { controller = "Movies", id = movieId });
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddGenre(int id, [FromForm]int genreId)
+        public async Task<IActionResult> AddGenreToMovie([FromForm]int movieId, [FromForm]int genreId)
         {
-            var movie = await MovieService.GetMovieById(id);
+            var movie = await MovieService.GetMovieById(movieId);
             var genre = await MyMDBService.GetGenreById(genreId);
-            movie.Genres.Add(genre);
-            DatabaseContext.Movies.Update(movie);
-            await DatabaseContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { controller = "Movies", id = id });
+            var genreLink = new GenreLink();
+            genreLink.MovieId = movie.Id;
+            genreLink.GenreId = genre.Id;
+            await MyMDBService.AddGenreLink(genreLink);
+            return RedirectToAction(nameof(Details), new { controller = "Movies", id = movieId });
         }
 
         public async Task<IActionResult> DeleteGenreFromMovie(int movieId, int genreId)
         {
             var movie = await MovieService.GetMovieById(movieId);
             var genre = await MyMDBService.GetGenreById(genreId);
-
-            movie.Genres.Remove(genre);
-            DatabaseContext.Movies.Update(movie);
-            await DatabaseContext.SaveChangesAsync();
-
+            var genreLink = await MyMDBService.GetGenreLinkById(movie.Id, genre.Id);
+            await MyMDBService.DeleteGenreLink(genreLink.Id);
             return RedirectToAction(nameof(Details), new { controller = "Movies", id = movieId });
         }
-
-        
-        
     }
 }

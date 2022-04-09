@@ -1,0 +1,34 @@
+﻿@model GenreLink
+
+<div class="form-group">
+    <label asp-for="GenreId">Genre</label>
+    <select class="form-control" asp-for="GenreId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllGenres())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="MovieId">Movie</label>
+    <select class="form-control" asp-for="MovieId" id="Movie">
+        <option value=""></option>
+        @foreach (var item in await MovieService.GetAllMovies())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="TVShowId">TV Show</label>
+    <select class="form-control" asp-for="TVShowId" id="TVShow">
+        <option value=""></option>
+        @foreach (var item in await TVService.GetAllTVShows())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>

@@ -35,5 +35,7 @@ namespace MyMDB.Data
         public DbSet<ProductionRole> ProductionRoles { get; set; }
         public DbSet<Article> Articles { get; set; }
         public DbSet<ListArticle> ListArticles { get; set; }
+        public DbSet<GenreLink> GenreLink { get; set; }
+        public DbSet<SeriesMovie> SeriesMovie { get; set; }
     }
 }

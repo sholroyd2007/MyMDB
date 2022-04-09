@@ -11,8 +11,6 @@ namespace MyMDB.Models
 
         public int CreatorId { get; set; }
 
-        public Collection<Genre> Genres{ get; set; }
-
         public bool Active { get; set; }
 
         public int EpisodeLength { get; set; }

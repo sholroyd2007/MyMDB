@@ -2,7 +2,7 @@
 
 <div class="form-group">
     <label asp-for="TVShowId">TV Show</label>
-    <select class="form-control os-dropdown" asp-for="TVShowId">
+    <select class="form-control" asp-for="TVShowId" id="TVShow">
         <option value=""></option>
         @foreach (var item in await TVService.GetAllTVShows())
         {

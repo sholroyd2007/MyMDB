@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyMDB.Data;
 
 namespace MyMDB.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220409144003_removedCollections")]
+    partial class removedCollections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -646,48 +648,6 @@ namespace MyMDB.Data.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("MyMDB.Models.GenreLink", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Edited")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("TVShowId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GenreId");
-
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("TVShowId");
-
-                    b.ToTable("GenreLink");
-                });
-
             modelBuilder.Entity("MyMDB.Models.JobRole", b =>
                 {
                     b.Property<int>("Id")
@@ -1069,43 +1029,6 @@ namespace MyMDB.Data.Migrations
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("MyMDB.Models.SeriesMovie", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Edited")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SeriesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("SeriesId");
-
-                    b.ToTable("SeriesMovie");
-                });
-
             modelBuilder.Entity("MyMDB.Models.TVShow", b =>
                 {
                     b.Property<int>("Id")
@@ -1381,29 +1304,6 @@ namespace MyMDB.Data.Migrations
                     b.Navigation("TVShow");
                 });
 
-            modelBuilder.Entity("MyMDB.Models.GenreLink", b =>
-                {
-                    b.HasOne("MyMDB.Models.Genre", "Genre")
-                        .WithMany()
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyMDB.Models.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId");
-
-                    b.HasOne("MyMDB.Models.TVShow", "TVShow")
-                        .WithMany()
-                        .HasForeignKey("TVShowId");
-
-                    b.Navigation("Genre");
-
-                    b.Navigation("Movie");
-
-                    b.Navigation("TVShow");
-                });
-
             modelBuilder.Entity("MyMDB.Models.MediaFile", b =>
                 {
                     b.HasOne("MyMDB.Models.Award", "Award")
@@ -1549,25 +1449,6 @@ namespace MyMDB.Data.Migrations
                     b.Navigation("Episode");
 
                     b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.SeriesMovie", b =>
-                {
-                    b.HasOne("MyMDB.Models.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyMDB.Models.MovieSeries", "Series")
-                        .WithMany()
-                        .HasForeignKey("SeriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-
-                    b.Navigation("Series");
                 });
 
             modelBuilder.Entity("MyMDB.Models.TVShow", b =>

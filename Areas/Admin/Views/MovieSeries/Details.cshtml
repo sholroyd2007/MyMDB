@@ -10,12 +10,7 @@
     <h4>MovieSeries</h4>
     <hr />
     @Html.EditorForModel()
-    <ul>
-        @foreach (var item in Model.Movies)
-       {
-           <li>@item.Name</li>
-       }
-    </ul>
+    
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

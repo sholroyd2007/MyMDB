@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MyMDB.Models.Genre>
+﻿@model IEnumerable<MyMDB.Models.GenreLink>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,9 +14,8 @@
     <thead>
         <tr>
             <th></th>
-            <th>Name</th>
-            <th>Created</th>
-            <th>Edited</th>
+            <th>Genre</th>
+            <th>Linked To</th>
             <th></th>
         </tr>
     </thead>
@@ -24,19 +23,14 @@
         @foreach (var item in Model)
         {
             <tr>
-
+                <td>@item.Id</td>
                 <td>
-                    @item.Id
+                    @item.Genre.Name
                 </td>
                 <td>
-                    @item.Name
+                    @(item.MovieId == null ? $"{item.TVShow.Name}" : $"{item.Movie.Name}")
                 </td>
-                <td>
-                    @item.Created.ToString("dd MMM yyyy")
-                </td>
-                <td>
-                    @item.Edited?.ToString("dd MMM yyyy")
-                </td>
+                
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
@@ -46,3 +40,4 @@
         }
     </tbody>
 </table>
+
