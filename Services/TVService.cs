@@ -42,6 +42,7 @@ namespace MyMDB.Services
         {
             var shows = await DatabaseContext.TVShows
                 .AsNoTracking()
+                .Where(e => e.Deleted == false)
                 .ToListAsync();
             return shows;
         }
@@ -79,6 +80,7 @@ namespace MyMDB.Services
             var episodes = await DatabaseContext.Episodes
                 .AsNoTracking()
                 .Include(e => e.TVShow)
+                .Where(e => e.Deleted == false)
                 .ToListAsync();
             return episodes;
         }
@@ -95,7 +97,7 @@ namespace MyMDB.Services
         {
             var tvShow = await GetTVShowById(id);
             var episodes = await DatabaseContext.Episodes.AsNoTracking()
-                .Where(e => e.TVShowId == tvShow.Id)
+                .Where(e => e.TVShowId == tvShow.Id && e.Deleted == false)
                 .ToListAsync();
             return episodes;
         }

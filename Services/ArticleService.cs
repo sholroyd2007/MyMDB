@@ -99,7 +99,10 @@ namespace MyMDB.Services
 
         public async Task<IEnumerable<Article>> GetAllArticles()
         {
-            return await DatabaseContext.Articles.AsNoTracking().ToListAsync();
+            return await DatabaseContext.Articles
+                .Where(e => e.Deleted == false)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<ListArticle>> GetAllListArticles()
@@ -117,7 +120,9 @@ namespace MyMDB.Services
 
         public async Task<Article> GetArticleById(int id)
         {
-            return await DatabaseContext.Articles.AsNoTracking().FirstOrDefaultAsync(e=>e.Id == id);
+            return await DatabaseContext.Articles
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e=>e.Id == id);
         }
 
         public async Task<IEnumerable<Article>> GetArticlesByAwardId(int id)
