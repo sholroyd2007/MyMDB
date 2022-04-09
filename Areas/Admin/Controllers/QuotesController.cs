@@ -63,9 +63,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                quote.Created = DateTime.Now.ToLocalTime();
-                _context.Add(quote);
-                await _context.SaveChangesAsync();
+                await MyMDBService.AddQuote(quote);
                 return RedirectToAction(nameof(Index));
             }
             return View(quote);
@@ -103,9 +101,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    quote.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(quote);
-                    await _context.SaveChangesAsync();
+                    await MyMDBService.EditQuote(quote);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -146,8 +142,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var quote = await MyMDBService.GetQuoteById(id);
-            _context.Quotes.Remove(quote);
-            await _context.SaveChangesAsync();
+            await MyMDBService.DeleteQuote(quote.Id);
             return RedirectToAction(nameof(Index));
         }
 

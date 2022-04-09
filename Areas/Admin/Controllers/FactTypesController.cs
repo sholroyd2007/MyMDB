@@ -63,9 +63,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                factType.Created = DateTime.Now.ToLocalTime();
-                _context.Add(factType);
-                await _context.SaveChangesAsync();
+                await MyMDBService.AddFactType(factType);
                 return RedirectToAction(nameof(Index));
             }
             return View(factType);
@@ -103,9 +101,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    factType.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(factType);
-                    await _context.SaveChangesAsync();
+                    await MyMDBService.EditFactType(factType);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -146,8 +142,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var factType = await MyMDBService.GetFactTypeById(id);
-            _context.FactTypes.Remove(factType);
-            await _context.SaveChangesAsync();
+            await MyMDBService.DeleteFactType(factType.Id);
             return RedirectToAction(nameof(Index));
         }
 

@@ -20,22 +20,25 @@ namespace MyMDB.Services
         Task<IEnumerable<MediaFile>> GetMediaFilesByGenreId(int id);
         Task<IEnumerable<MediaFile>> GetMediaFilesByMovieSeriesId(int id);
         Task<IEnumerable<MediaFile>> GetMediaFilesByMovieStudioId(int id);
+
+        Task DeleteMediaFile(int id);
     }
 
     public class MediaService : IMediaService
     {
-        public MediaService(ApplicationDbContext context)
+        public ApplicationDbContext DatabaseContext { get; }
+
+        public MediaService(ApplicationDbContext databaseContext)
         {
-            Context = context;
+            DatabaseContext = databaseContext;
         }
 
-        public ApplicationDbContext Context { get; }
 
         public async Task<IEnumerable<MediaFile>> GetAllMediaFiles()
         {
-            var mediaFiles = await Context.MediaFiles
+            var mediaFiles = await DatabaseContext.MediaFiles
                 .AsNoTracking()
-                .Include(e => e.CastCrewMember)
+                .Include(e => e.CastCrewMembers)
                 .Include(e => e.Episode)
                 .Include(e => e.TVShow)
                 .Include(e => e.Movie)
@@ -43,16 +46,17 @@ namespace MyMDB.Services
                 .Include(e => e.Genre)
                 .Include(e => e.MovieSeries)
                 .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
+                .Include(e => e.Characters)
+                .Where(e => e.Deleted == false)
                 .ToListAsync();
             return mediaFiles;
         }
 
         public async Task<MediaFile> GetMediaFileById(int id)
         {
-            var mediaFile = await Context.MediaFiles
+            var mediaFile = await DatabaseContext.MediaFiles
                 .AsNoTracking()
-                .Include(e => e.CastCrewMember)
+                .Include(e => e.CastCrewMembers)
                 .Include(e => e.Episode)
                 .Include(e => e.TVShow)
                 .Include(e => e.Movie)
@@ -60,144 +64,73 @@ namespace MyMDB.Services
                 .Include(e => e.Genre)
                 .Include(e => e.MovieSeries)
                 .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
+                .Include(e => e.Characters)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return mediaFile;
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByMovieId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.MovieId == id).ToListAsync();
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e=>e.MovieId == id);
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByTVShowId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.TVShowId == id).ToListAsync();
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e => e.TVShowId == id);
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByEpisodeId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.EpisodeId == id).ToListAsync();
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e => e.EpisodeId == id);
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByCastCrewMemberId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.CastCrewMemberId == id).ToListAsync();
+            var castCrewMember = await DatabaseContext.CastCrewMember.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e => e.CastCrewMembers.Contains(castCrewMember));
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByCharacterId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.CharacterId == id).ToListAsync();
+            var character = await DatabaseContext.Characters.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e => e.Characters.Contains(character));
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByAwardId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.AwardId == id).ToListAsync();
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e => e.AwardId == id);
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByGenreId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.GenreId == id).ToListAsync();
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e => e.GenreId == id);
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByMovieSeriesId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.MovieSeriesId == id).ToListAsync();
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e => e.MovieSeriesId == id);
         }
 
         public async Task<IEnumerable<MediaFile>> GetMediaFilesByMovieStudioId(int id)
         {
-            return await Context.MediaFiles.AsNoTracking()
-                .Include(e => e.CastCrewMember)
-                .Include(e => e.Episode)
-                .Include(e => e.TVShow)
-                .Include(e => e.Movie)
-                .Include(e => e.Award)
-                .Include(e => e.Genre)
-                .Include(e => e.MovieSeries)
-                .Include(e => e.MovieStudio)
-                .Include(e => e.Character)
-                .Where(e => e.MovieStudioId == id).ToListAsync();
+            var allMediaFiles = await GetAllMediaFiles();
+            return allMediaFiles.Where(e => e.MovieStudioId == id);
+        }
+
+        public async Task DeleteMediaFile(int id)
+        {
+            var item = await GetMediaFileById(id);
+            item.Deleted = true;
+            DatabaseContext.MediaFiles.Update(item);
+            await DatabaseContext.SaveChangesAsync();
         }
     }
 }

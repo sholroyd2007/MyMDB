@@ -87,79 +87,6 @@ namespace MyMDB.Areas.Admin.Controllers
                 _context.Add(mediaFile);
                 await _context.SaveChangesAsync();
 
-                if (mediaFile.MovieId != null)
-                {
-                    var movie = await MovieService.GetMovieById(mediaFile.MovieId.Value);
-                    movie.MediaFiles.Add(mediaFile);
-                    _context.Movies.Update(movie);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (mediaFile.CastCrewMemberId != null)
-                {
-                    var castCrewMember = await MyMDBService.GetCastCrewMemberById(mediaFile.CastCrewMemberId.Value);
-                    castCrewMember.MediaFiles.Add(mediaFile);
-                    _context.CastCrewMember.Update(castCrewMember);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (mediaFile.CharacterId != null)
-                {
-                    var character = await MyMDBService.GetCharacterById(mediaFile.CharacterId.Value);
-                    character.MediaFiles.Add(mediaFile);
-                    _context.Characters.Update(character);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (mediaFile.TVShowId != null)
-                {
-                    var tvShow = await TVService.GetTVShowById(mediaFile.TVShowId.Value);
-                    tvShow.MediaFiles.Add(mediaFile);
-                    _context.TVShows.Update(tvShow);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (mediaFile.EpisodeId != null)
-                {
-                    var episode = await TVService.GetEpisodeById(mediaFile.EpisodeId.Value);
-                    episode.MediaFiles.Add(mediaFile);
-                    _context.Episodes.Update(episode);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (mediaFile.AwardId != null)
-                {
-                    var award = await AwardService.GetAwardById(mediaFile.AwardId.Value);
-                    award.MediaFiles.Add(mediaFile);
-                    _context.Awards.Update(award);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (mediaFile.GenreId != null)
-                {
-                    var genre = await MyMDBService.GetGenreById(mediaFile.GenreId.Value);
-                    genre.MediaFiles.Add(mediaFile);
-                    _context.Genres.Update(genre);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (mediaFile.MovieSeriesId != null)
-                {
-                    var series = await MovieService.GetMovieSeriesById(mediaFile.MovieSeriesId.Value);
-                    series.MediaFiles.Add(mediaFile);
-                    _context.MovieSeries.Update(series);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (mediaFile.MovieStudioId != null)
-                {
-                    var studio = await MovieService.GetMovieStudioById(mediaFile.MovieStudioId.Value);
-                    studio.MediaFiles.Add(mediaFile);
-                    _context.MovieStudios.Update(studio);
-                    await _context.SaveChangesAsync();
-                }
-
-
                 return RedirectToAction(nameof(Index));
             }
             return View(mediaFile);
@@ -205,7 +132,7 @@ namespace MyMDB.Areas.Admin.Controllers
                         
                     }
 
-                    mediaFile.Edited = DateTime.Now.ToLocalTime();
+                    mediaFile.Edited = DateTime.UtcNow;
                     _context.Update(mediaFile);
                     await _context.SaveChangesAsync();
                 }
@@ -248,8 +175,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var mediaFile = await MediaService.GetMediaFileById(id);
-            _context.MediaFiles.Remove(mediaFile);
-            await _context.SaveChangesAsync();
+            await MediaService.DeleteMediaFile(mediaFile.Id);
             return RedirectToAction(nameof(Index));
         }
 

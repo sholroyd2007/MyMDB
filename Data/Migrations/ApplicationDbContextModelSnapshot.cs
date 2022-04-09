@@ -16,23 +16,8 @@ namespace MyMDB.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.12")
+                .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("AwardRecipientMediaFile", b =>
-                {
-                    b.Property<int>("AwardRecipientsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MediaFilesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AwardRecipientsId", "MediaFilesId");
-
-                    b.HasIndex("MediaFilesId");
-
-                    b.ToTable("AwardRecipientMediaFile");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -234,6 +219,73 @@ namespace MyMDB.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("MyMDB.Models.Article", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("AwardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CastCrewMemberId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CharacterId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Edited")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("EpisodeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MovieSeriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MovieStudioId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TVShowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AwardId");
+
+                    b.HasIndex("CastCrewMemberId");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("EpisodeId");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("MovieSeriesId");
+
+                    b.HasIndex("MovieStudioId");
+
+                    b.HasIndex("TVShowId");
+
+                    b.ToTable("Articles");
+                });
+
             modelBuilder.Entity("MyMDB.Models.Award", b =>
                 {
                     b.Property<int>("Id")
@@ -253,19 +305,15 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ListArticleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ListArticleId");
 
                     b.ToTable("Awards");
                 });
@@ -289,16 +337,7 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -319,13 +358,7 @@ namespace MyMDB.Data.Migrations
                     b.Property<int>("AwardId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AwardRecipientId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CastCrewMemberId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CharacterId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
@@ -343,44 +376,14 @@ namespace MyMDB.Data.Migrations
                     b.Property<int?>("EpisodeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GenreId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JobRoleId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MovieSeriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MovieStudioId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductionRoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("QuoteId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RatingId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("TVShowId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Win")
                         .HasColumnType("bit");
@@ -394,29 +397,11 @@ namespace MyMDB.Data.Migrations
 
                     b.HasIndex("AwardId");
 
-                    b.HasIndex("AwardRecipientId");
-
                     b.HasIndex("CastCrewMemberId");
-
-                    b.HasIndex("CharacterId");
 
                     b.HasIndex("EpisodeId");
 
-                    b.HasIndex("GenreId");
-
-                    b.HasIndex("JobRoleId");
-
                     b.HasIndex("MovieId");
-
-                    b.HasIndex("MovieSeriesId");
-
-                    b.HasIndex("MovieStudioId");
-
-                    b.HasIndex("ProductionRoleId");
-
-                    b.HasIndex("QuoteId");
-
-                    b.HasIndex("RatingId");
 
                     b.HasIndex("TVShowId");
 
@@ -451,19 +436,23 @@ namespace MyMDB.Data.Migrations
                     b.Property<string>("From")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ListArticleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MediaFileId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ListArticleId");
+
+                    b.HasIndex("MediaFileId");
 
                     b.ToTable("CastCrewMember");
                 });
@@ -487,19 +476,20 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ListArticleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MediaFileId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ListArticleId");
+
+                    b.HasIndex("MediaFileId");
 
                     b.ToTable("Characters");
                 });
@@ -529,14 +519,11 @@ namespace MyMDB.Data.Migrations
                     b.Property<int>("EpisodeNumber")
                         .HasColumnType("int");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ListArticleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
 
                     b.Property<int>("SeriesNumber")
                         .HasColumnType("int");
@@ -544,10 +531,9 @@ namespace MyMDB.Data.Migrations
                     b.Property<int>("TVShowId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ListArticleId");
 
                     b.HasIndex("TVShowId");
 
@@ -561,23 +547,14 @@ namespace MyMDB.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AwardCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AwardId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AwardRecipientId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CastCrewMemberId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CharacterId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -591,31 +568,7 @@ namespace MyMDB.Data.Migrations
                     b.Property<int>("FactTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GenreId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JobRoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MediaFileId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MovieSeriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MovieStudioId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductionRoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("QuoteId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RatingId")
                         .HasColumnType("int");
 
                     b.Property<int?>("TVShowId")
@@ -623,37 +576,13 @@ namespace MyMDB.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AwardCategoryId");
-
-                    b.HasIndex("AwardId");
-
-                    b.HasIndex("AwardRecipientId");
-
                     b.HasIndex("CastCrewMemberId");
-
-                    b.HasIndex("CharacterId");
 
                     b.HasIndex("EpisodeId");
 
                     b.HasIndex("FactTypeId");
 
-                    b.HasIndex("GenreId");
-
-                    b.HasIndex("JobRoleId");
-
-                    b.HasIndex("MediaFileId");
-
                     b.HasIndex("MovieId");
-
-                    b.HasIndex("MovieSeriesId");
-
-                    b.HasIndex("MovieStudioId");
-
-                    b.HasIndex("ProductionRoleId");
-
-                    b.HasIndex("QuoteId");
-
-                    b.HasIndex("RatingId");
 
                     b.HasIndex("TVShowId");
 
@@ -669,6 +598,12 @@ namespace MyMDB.Data.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
@@ -700,23 +635,14 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("MovieId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("TVShowId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -746,21 +672,39 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("JobRoles");
+                });
+
+            modelBuilder.Entity("MyMDB.Models.ListArticle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Edited")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ListArticles");
                 });
 
             modelBuilder.Entity("MyMDB.Models.MediaFile", b =>
@@ -770,16 +714,7 @@ namespace MyMDB.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AwardCategoryId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("AwardId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CastCrewMemberId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CharacterId")
                         .HasColumnType("int");
 
                     b.Property<string>("ContentType")
@@ -806,15 +741,6 @@ namespace MyMDB.Data.Migrations
                     b.Property<int?>("GenreId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("JobRoleId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("MediaFileId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MovieId")
                         .HasColumnType("int");
 
@@ -827,53 +753,22 @@ namespace MyMDB.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductionRoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("QuoteId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RatingId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("TVShowId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AwardCategoryId");
-
                     b.HasIndex("AwardId");
-
-                    b.HasIndex("CastCrewMemberId");
-
-                    b.HasIndex("CharacterId");
 
                     b.HasIndex("EpisodeId");
 
                     b.HasIndex("GenreId");
-
-                    b.HasIndex("JobRoleId");
-
-                    b.HasIndex("MediaFileId");
 
                     b.HasIndex("MovieId");
 
                     b.HasIndex("MovieSeriesId");
 
                     b.HasIndex("MovieStudioId");
-
-                    b.HasIndex("ProductionRoleId");
-
-                    b.HasIndex("QuoteId");
-
-                    b.HasIndex("RatingId");
 
                     b.HasIndex("TVShowId");
 
@@ -911,6 +806,9 @@ namespace MyMDB.Data.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ListArticleId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("MovieSeriesId")
                         .HasColumnType("int");
 
@@ -919,9 +817,6 @@ namespace MyMDB.Data.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("Release")
                         .HasColumnType("datetime2");
@@ -933,6 +828,8 @@ namespace MyMDB.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ListArticleId");
 
                     b.HasIndex("MovieSeriesId");
 
@@ -960,19 +857,15 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ListArticleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ListArticleId");
 
                     b.ToTable("MovieSeries");
                 });
@@ -996,19 +889,15 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ListArticleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ListArticleId");
 
                     b.ToTable("MovieStudios");
                 });
@@ -1047,19 +936,10 @@ namespace MyMDB.Data.Migrations
                     b.Property<int>("JobRoleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("MovieId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1102,19 +982,10 @@ namespace MyMDB.Data.Migrations
                     b.Property<int?>("EpisodeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("MovieId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1153,19 +1024,10 @@ namespace MyMDB.Data.Migrations
                     b.Property<int?>("EpisodeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("MovieId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1208,11 +1070,11 @@ namespace MyMDB.Data.Migrations
                     b.Property<string>("Language")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ListArticleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
@@ -1221,22 +1083,9 @@ namespace MyMDB.Data.Migrations
 
                     b.HasIndex("CreatorId");
 
+                    b.HasIndex("ListArticleId");
+
                     b.ToTable("TVShows");
-                });
-
-            modelBuilder.Entity("AwardRecipientMediaFile", b =>
-                {
-                    b.HasOne("MyMDB.Models.AwardRecipient", null)
-                        .WithMany()
-                        .HasForeignKey("AwardRecipientsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyMDB.Models.MediaFile", null)
-                        .WithMany()
-                        .HasForeignKey("MediaFilesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1290,70 +1139,94 @@ namespace MyMDB.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MyMDB.Models.Article", b =>
+                {
+                    b.HasOne("MyMDB.Models.Award", "Award")
+                        .WithMany()
+                        .HasForeignKey("AwardId");
+
+                    b.HasOne("MyMDB.Models.CastCrewMember", "CastCrewMember")
+                        .WithMany()
+                        .HasForeignKey("CastCrewMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyMDB.Models.Character", "Character")
+                        .WithMany()
+                        .HasForeignKey("CharacterId");
+
+                    b.HasOne("MyMDB.Models.Episode", "Episode")
+                        .WithMany()
+                        .HasForeignKey("EpisodeId");
+
+                    b.HasOne("MyMDB.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId");
+
+                    b.HasOne("MyMDB.Models.MovieSeries", "MovieSeries")
+                        .WithMany()
+                        .HasForeignKey("MovieSeriesId");
+
+                    b.HasOne("MyMDB.Models.MovieStudio", "MovieStudio")
+                        .WithMany()
+                        .HasForeignKey("MovieStudioId");
+
+                    b.HasOne("MyMDB.Models.TVShow", "TVShow")
+                        .WithMany()
+                        .HasForeignKey("TVShowId");
+
+                    b.Navigation("Award");
+
+                    b.Navigation("CastCrewMember");
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Episode");
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("MovieSeries");
+
+                    b.Navigation("MovieStudio");
+
+                    b.Navigation("TVShow");
+                });
+
+            modelBuilder.Entity("MyMDB.Models.Award", b =>
+                {
+                    b.HasOne("MyMDB.Models.ListArticle", null)
+                        .WithMany("Awards")
+                        .HasForeignKey("ListArticleId");
+                });
+
             modelBuilder.Entity("MyMDB.Models.AwardRecipient", b =>
                 {
                     b.HasOne("MyMDB.Models.AwardCategory", "AwardCategory")
-                        .WithMany("AwardRecipients")
+                        .WithMany()
                         .HasForeignKey("AwardCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyMDB.Models.Award", "Award")
-                        .WithMany("AwardRecipients")
+                        .WithMany()
                         .HasForeignKey("AwardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyMDB.Models.AwardRecipient", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("AwardRecipientId");
-
                     b.HasOne("MyMDB.Models.CastCrewMember", "CastCrewMember")
-                        .WithMany("AwardRecipients")
+                        .WithMany()
                         .HasForeignKey("CastCrewMemberId");
 
-                    b.HasOne("MyMDB.Models.Character", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("CharacterId");
-
                     b.HasOne("MyMDB.Models.Episode", "Episode")
-                        .WithMany("AwardRecipients")
+                        .WithMany()
                         .HasForeignKey("EpisodeId");
 
-                    b.HasOne("MyMDB.Models.Genre", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("GenreId");
-
-                    b.HasOne("MyMDB.Models.JobRole", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("JobRoleId");
-
                     b.HasOne("MyMDB.Models.Movie", "Movie")
-                        .WithMany("AwardRecipients")
+                        .WithMany()
                         .HasForeignKey("MovieId");
 
-                    b.HasOne("MyMDB.Models.MovieSeries", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("MovieSeriesId");
-
-                    b.HasOne("MyMDB.Models.MovieStudio", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("MovieStudioId");
-
-                    b.HasOne("MyMDB.Models.ProductionRole", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("ProductionRoleId");
-
-                    b.HasOne("MyMDB.Models.Quote", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("QuoteId");
-
-                    b.HasOne("MyMDB.Models.Rating", null)
-                        .WithMany("AwardRecipients")
-                        .HasForeignKey("RatingId");
-
                     b.HasOne("MyMDB.Models.TVShow", "TVShow")
-                        .WithMany("AwardRecipients")
+                        .WithMany()
                         .HasForeignKey("TVShowId");
 
                     b.Navigation("Award");
@@ -1369,10 +1242,36 @@ namespace MyMDB.Data.Migrations
                     b.Navigation("TVShow");
                 });
 
+            modelBuilder.Entity("MyMDB.Models.CastCrewMember", b =>
+                {
+                    b.HasOne("MyMDB.Models.ListArticle", null)
+                        .WithMany("CastCrewMembers")
+                        .HasForeignKey("ListArticleId");
+
+                    b.HasOne("MyMDB.Models.MediaFile", null)
+                        .WithMany("CastCrewMembers")
+                        .HasForeignKey("MediaFileId");
+                });
+
+            modelBuilder.Entity("MyMDB.Models.Character", b =>
+                {
+                    b.HasOne("MyMDB.Models.ListArticle", null)
+                        .WithMany("Characters")
+                        .HasForeignKey("ListArticleId");
+
+                    b.HasOne("MyMDB.Models.MediaFile", null)
+                        .WithMany("Characters")
+                        .HasForeignKey("MediaFileId");
+                });
+
             modelBuilder.Entity("MyMDB.Models.Episode", b =>
                 {
-                    b.HasOne("MyMDB.Models.TVShow", "TVShow")
+                    b.HasOne("MyMDB.Models.ListArticle", null)
                         .WithMany("Episodes")
+                        .HasForeignKey("ListArticleId");
+
+                    b.HasOne("MyMDB.Models.TVShow", "TVShow")
+                        .WithMany()
                         .HasForeignKey("TVShowId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1382,28 +1281,12 @@ namespace MyMDB.Data.Migrations
 
             modelBuilder.Entity("MyMDB.Models.Fact", b =>
                 {
-                    b.HasOne("MyMDB.Models.AwardCategory", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("AwardCategoryId");
-
-                    b.HasOne("MyMDB.Models.Award", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("AwardId");
-
-                    b.HasOne("MyMDB.Models.AwardRecipient", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("AwardRecipientId");
-
                     b.HasOne("MyMDB.Models.CastCrewMember", "CastCrewMember")
-                        .WithMany("Facts")
+                        .WithMany()
                         .HasForeignKey("CastCrewMemberId");
 
-                    b.HasOne("MyMDB.Models.Character", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("CharacterId");
-
                     b.HasOne("MyMDB.Models.Episode", "Episode")
-                        .WithMany("Facts")
+                        .WithMany()
                         .HasForeignKey("EpisodeId");
 
                     b.HasOne("MyMDB.Models.FactType", "FactType")
@@ -1412,44 +1295,12 @@ namespace MyMDB.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyMDB.Models.Genre", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("GenreId");
-
-                    b.HasOne("MyMDB.Models.JobRole", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("JobRoleId");
-
-                    b.HasOne("MyMDB.Models.MediaFile", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("MediaFileId");
-
                     b.HasOne("MyMDB.Models.Movie", "Movie")
-                        .WithMany("Facts")
+                        .WithMany()
                         .HasForeignKey("MovieId");
 
-                    b.HasOne("MyMDB.Models.MovieSeries", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("MovieSeriesId");
-
-                    b.HasOne("MyMDB.Models.MovieStudio", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("MovieStudioId");
-
-                    b.HasOne("MyMDB.Models.ProductionRole", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("ProductionRoleId");
-
-                    b.HasOne("MyMDB.Models.Quote", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("QuoteId");
-
-                    b.HasOne("MyMDB.Models.Rating", null)
-                        .WithMany("Facts")
-                        .HasForeignKey("RatingId");
-
                     b.HasOne("MyMDB.Models.TVShow", "TVShow")
-                        .WithMany("Facts")
+                        .WithMany()
                         .HasForeignKey("TVShowId");
 
                     b.Navigation("CastCrewMember");
@@ -1476,71 +1327,35 @@ namespace MyMDB.Data.Migrations
 
             modelBuilder.Entity("MyMDB.Models.MediaFile", b =>
                 {
-                    b.HasOne("MyMDB.Models.AwardCategory", null)
-                        .WithMany("MediaFiles")
-                        .HasForeignKey("AwardCategoryId");
-
                     b.HasOne("MyMDB.Models.Award", "Award")
-                        .WithMany("MediaFiles")
+                        .WithMany()
                         .HasForeignKey("AwardId");
 
-                    b.HasOne("MyMDB.Models.CastCrewMember", "CastCrewMember")
-                        .WithMany("MediaFiles")
-                        .HasForeignKey("CastCrewMemberId");
-
-                    b.HasOne("MyMDB.Models.Character", "Character")
-                        .WithMany("MediaFiles")
-                        .HasForeignKey("CharacterId");
-
                     b.HasOne("MyMDB.Models.Episode", "Episode")
-                        .WithMany("MediaFiles")
+                        .WithMany()
                         .HasForeignKey("EpisodeId");
 
                     b.HasOne("MyMDB.Models.Genre", "Genre")
-                        .WithMany("MediaFiles")
+                        .WithMany()
                         .HasForeignKey("GenreId");
 
-                    b.HasOne("MyMDB.Models.JobRole", null)
-                        .WithMany("MediaFiles")
-                        .HasForeignKey("JobRoleId");
-
-                    b.HasOne("MyMDB.Models.MediaFile", null)
-                        .WithMany("MediaFiles")
-                        .HasForeignKey("MediaFileId");
-
                     b.HasOne("MyMDB.Models.Movie", "Movie")
-                        .WithMany("MediaFiles")
+                        .WithMany()
                         .HasForeignKey("MovieId");
 
                     b.HasOne("MyMDB.Models.MovieSeries", "MovieSeries")
-                        .WithMany("MediaFiles")
+                        .WithMany()
                         .HasForeignKey("MovieSeriesId");
 
                     b.HasOne("MyMDB.Models.MovieStudio", "MovieStudio")
-                        .WithMany("MediaFiles")
+                        .WithMany()
                         .HasForeignKey("MovieStudioId");
 
-                    b.HasOne("MyMDB.Models.ProductionRole", null)
-                        .WithMany("MediaFiles")
-                        .HasForeignKey("ProductionRoleId");
-
-                    b.HasOne("MyMDB.Models.Quote", null)
-                        .WithMany("MediaFiles")
-                        .HasForeignKey("QuoteId");
-
-                    b.HasOne("MyMDB.Models.Rating", null)
-                        .WithMany("MediaFiles")
-                        .HasForeignKey("RatingId");
-
                     b.HasOne("MyMDB.Models.TVShow", "TVShow")
-                        .WithMany("MediaFiles")
+                        .WithMany()
                         .HasForeignKey("TVShowId");
 
                     b.Navigation("Award");
-
-                    b.Navigation("CastCrewMember");
-
-                    b.Navigation("Character");
 
                     b.Navigation("Episode");
 
@@ -1557,6 +1372,10 @@ namespace MyMDB.Data.Migrations
 
             modelBuilder.Entity("MyMDB.Models.Movie", b =>
                 {
+                    b.HasOne("MyMDB.Models.ListArticle", null)
+                        .WithMany("Movies")
+                        .HasForeignKey("ListArticleId");
+
                     b.HasOne("MyMDB.Models.MovieSeries", null)
                         .WithMany("Movies")
                         .HasForeignKey("MovieSeriesId");
@@ -1568,6 +1387,20 @@ namespace MyMDB.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("MovieStudio");
+                });
+
+            modelBuilder.Entity("MyMDB.Models.MovieSeries", b =>
+                {
+                    b.HasOne("MyMDB.Models.ListArticle", null)
+                        .WithMany("MovieSeries")
+                        .HasForeignKey("ListArticleId");
+                });
+
+            modelBuilder.Entity("MyMDB.Models.MovieStudio", b =>
+                {
+                    b.HasOne("MyMDB.Models.ListArticle", null)
+                        .WithMany("MovieStudios")
+                        .HasForeignKey("ListArticleId");
                 });
 
             modelBuilder.Entity("MyMDB.Models.ProductionRole", b =>
@@ -1583,7 +1416,7 @@ namespace MyMDB.Data.Migrations
                         .HasForeignKey("CharacterId");
 
                     b.HasOne("MyMDB.Models.Episode", "Episode")
-                        .WithMany("ProductionRoles")
+                        .WithMany()
                         .HasForeignKey("EpisodeId");
 
                     b.HasOne("MyMDB.Models.JobRole", "JobRole")
@@ -1593,7 +1426,7 @@ namespace MyMDB.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("MyMDB.Models.Movie", "Movie")
-                        .WithMany("ProductionRoles")
+                        .WithMany()
                         .HasForeignKey("MovieId");
 
                     b.Navigation("CastCrewMember");
@@ -1635,7 +1468,7 @@ namespace MyMDB.Data.Migrations
                         .HasForeignKey("EpisodeId");
 
                     b.HasOne("MyMDB.Models.Movie", "Movie")
-                        .WithMany("Ratings")
+                        .WithMany()
                         .HasForeignKey("MovieId");
 
                     b.Navigation("Episode");
@@ -1651,161 +1484,52 @@ namespace MyMDB.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MyMDB.Models.ListArticle", null)
+                        .WithMany("TVShows")
+                        .HasForeignKey("ListArticleId");
+
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("MyMDB.Models.Award", b =>
+            modelBuilder.Entity("MyMDB.Models.ListArticle", b =>
                 {
-                    b.Navigation("AwardRecipients");
+                    b.Navigation("Awards");
 
-                    b.Navigation("Facts");
+                    b.Navigation("CastCrewMembers");
 
-                    b.Navigation("MediaFiles");
-                });
+                    b.Navigation("Characters");
 
-            modelBuilder.Entity("MyMDB.Models.AwardCategory", b =>
-                {
-                    b.Navigation("AwardRecipients");
+                    b.Navigation("Episodes");
 
-                    b.Navigation("Facts");
+                    b.Navigation("Movies");
 
-                    b.Navigation("MediaFiles");
-                });
+                    b.Navigation("MovieSeries");
 
-            modelBuilder.Entity("MyMDB.Models.AwardRecipient", b =>
-                {
-                    b.Navigation("AwardRecipients");
+                    b.Navigation("MovieStudios");
 
-                    b.Navigation("Facts");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.CastCrewMember", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.Character", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.Episode", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
-
-                    b.Navigation("ProductionRoles");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.Genre", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.JobRole", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
+                    b.Navigation("TVShows");
                 });
 
             modelBuilder.Entity("MyMDB.Models.MediaFile", b =>
                 {
-                    b.Navigation("Facts");
+                    b.Navigation("CastCrewMembers");
 
-                    b.Navigation("MediaFiles");
+                    b.Navigation("Characters");
                 });
 
             modelBuilder.Entity("MyMDB.Models.Movie", b =>
                 {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
                     b.Navigation("Genres");
-
-                    b.Navigation("MediaFiles");
-
-                    b.Navigation("ProductionRoles");
-
-                    b.Navigation("Ratings");
                 });
 
             modelBuilder.Entity("MyMDB.Models.MovieSeries", b =>
                 {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
-
                     b.Navigation("Movies");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.MovieStudio", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.ProductionRole", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.Quote", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.Rating", b =>
-                {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Facts");
-
-                    b.Navigation("MediaFiles");
                 });
 
             modelBuilder.Entity("MyMDB.Models.TVShow", b =>
                 {
-                    b.Navigation("AwardRecipients");
-
-                    b.Navigation("Episodes");
-
-                    b.Navigation("Facts");
-
                     b.Navigation("Genres");
-
-                    b.Navigation("MediaFiles");
                 });
 #pragma warning restore 612, 618
         }

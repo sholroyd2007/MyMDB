@@ -1,4 +1,6 @@
-﻿namespace MyMDB.Models
+﻿using System.Collections.ObjectModel;
+
+namespace MyMDB.Models
 {
     public class MediaFile : Entity
     {
@@ -6,8 +8,8 @@
 
         public string ContentType { get; set; }
 
-        public CastCrewMember CastCrewMember { get; set; }
-        public int? CastCrewMemberId { get; set; }
+        public Collection<CastCrewMember> CastCrewMembers { get; set; }
+        public Collection<Character> Characters { get; set; }
 
         public Episode Episode { get; set; }
         public int? EpisodeId { get; set; }
@@ -30,7 +32,5 @@
         public MovieStudio MovieStudio { get; set; }
         public int? MovieStudioId { get; set; }
 
-        public Character Character { get; set; }
-        public int? CharacterId { get; set; }
     }
 }

@@ -1,4 +1,7 @@
 ﻿@model Quote
+<input type="hidden" asp-for="Created" />
+<input type="hidden" asp-for="Edited" value="@DateTime.UtcNow" />
+<input type="hidden" asp-for="Deleted" />
 
 <div class="form-group">
     <label asp-for="Description" class="control-label"></label>

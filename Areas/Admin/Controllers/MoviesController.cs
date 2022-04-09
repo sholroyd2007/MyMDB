@@ -15,16 +15,15 @@ namespace MyMDB.Areas.Admin.Controllers
     [Area("Admin")]
     public class MoviesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
+        public ApplicationDbContext DatabaseContext { get; }
         public IMyMDBService MyMDBService { get; }
         public IMovieService MovieService { get; }
 
-        public MoviesController(ApplicationDbContext context,
+        public MoviesController(ApplicationDbContext databaseContext,
             IMyMDBService myMDBService,
             IMovieService movieService)
         {
-            _context = context;
+            DatabaseContext = databaseContext;
             MyMDBService = myMDBService;
             MovieService = movieService;
         }
@@ -67,9 +66,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                movie.Created = DateTime.Now.ToLocalTime();
-                _context.Add(movie);
-                await _context.SaveChangesAsync();
+                await MovieService.AddMovie(movie);
                 return RedirectToAction(nameof(Index));
             }
             return View(movie);
@@ -107,9 +104,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    movie.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(movie);
-                    await _context.SaveChangesAsync();
+                    await MovieService.EditMovie(movie);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -150,14 +145,13 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var movie = await MovieService.GetMovieById(id);
-            _context.Movies.Remove(movie);
-            await _context.SaveChangesAsync();
+            await MovieService.DeleteMovie(movie.Id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool MovieExists(int id)
         {
-            return _context.Movies.Any(e => e.Id == id);
+            return DatabaseContext.Movies.Any(e => e.Id == id);
         }
 
         [HttpPost]
@@ -167,20 +161,19 @@ namespace MyMDB.Areas.Admin.Controllers
             var seriesId = Int32.Parse(Request.Form["movieSeriesId"]);
             var movieSeries = await MovieService.GetMovieSeriesById(seriesId);
             movieSeries.Movies.Add(movie);
-            _context.MovieSeries.Update(movieSeries);
-            await _context.SaveChangesAsync();
+            DatabaseContext.MovieSeries.Update(movieSeries);
+            await DatabaseContext.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { controller = "Movies", id = id });
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddGenre(int id)
+        public async Task<IActionResult> AddGenre(int id, [FromForm]int genreId)
         {
             var movie = await MovieService.GetMovieById(id);
-            var genreId = Int32.Parse(Request.Form["genreId"]);
             var genre = await MyMDBService.GetGenreById(genreId);
             movie.Genres.Add(genre);
-            _context.Movies.Update(movie);
-            await _context.SaveChangesAsync();
+            DatabaseContext.Movies.Update(movie);
+            await DatabaseContext.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { controller = "Movies", id = id });
         }
 
@@ -190,37 +183,13 @@ namespace MyMDB.Areas.Admin.Controllers
             var genre = await MyMDBService.GetGenreById(genreId);
 
             movie.Genres.Remove(genre);
-            _context.Movies.Update(movie);
-            await _context.SaveChangesAsync();
+            DatabaseContext.Movies.Update(movie);
+            await DatabaseContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(Details), new { controller = "Movies", id = movieId });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddMediaFiles()
-        {
-            var movieId = int.Parse(HttpContext.Request.Form["movieId"]);
-            var movie = await MovieService.GetMovieById(movieId);
-            var files = Request.Form.Files;
-            foreach (var file in files)
-            {
-                if (file != null)
-                {
-                    var mediaFile = new MediaFile();
-
-                    mediaFile.Data = file.OpenReadStream().ReadFully();
-                    mediaFile.ContentType = file.ContentType;
-                    mediaFile.Created = DateTime.Now.ToLocalTime();
-                    mediaFile.MovieId = movie.Id;
-
-                    _context.Add(mediaFile);
-                    movie.MediaFiles.Add(mediaFile);
-                    await _context.SaveChangesAsync();
-                }
-
-            }
-
-            return RedirectToAction(nameof(Details), new { controller = "Movies", id = movieId });
-        }
+        
+        
     }
 }

@@ -66,9 +66,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                award.Created = DateTime.Now.ToLocalTime();
-                _context.Add(award);
-                await _context.SaveChangesAsync();
+                await AwardService.AddAward(award);
                 return RedirectToAction(nameof(Index));
             }
             return View(award);
@@ -106,8 +104,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    award.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(award);
+                    await AwardService.EditAward(award);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -149,8 +146,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var award = await AwardService.GetAwardById(id);
-            _context.Awards.Remove(award);
-            await _context.SaveChangesAsync();
+            await AwardService.DeleteAward(award.Id);
             return RedirectToAction(nameof(Index));
         }
 

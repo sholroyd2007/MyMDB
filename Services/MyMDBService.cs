@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,24 +34,55 @@ namespace MyMDB.Services
         Task<IEnumerable<ProductionRole>> GetProductionRolesByCastCrewMemberId(int id);
         Task<IEnumerable<ProductionRole>> GetProductionRolesByTVShowId(int id);
         Task<IEnumerable<ProductionRole>> GetProductionRolesByCharacterId(int id);
+
+        Task AddGenre(Genre itemToAdd);
+        Task AddFact(Fact itemToAdd);
+        Task AddFactType(FactType itemToAdd);
+        Task AddRating(Rating itemToAdd);
+        Task AddQuote(Quote itemToAdd);
+        Task AddCastCrewMember(CastCrewMember itemToAdd);
+        Task AddProductionRole(ProductionRole itemToAdd);
+        Task AddJobRole(JobRole itemToAdd);
+        Task AddCharacter(Character itemToAdd);
+
+        Task EditGenre(Genre itemToEdit);
+        Task EditFact(Fact itemToEdit);
+        Task EditFactType(FactType itemToEdit);
+        Task EditRating(Rating itemToEdit);
+        Task EditQuote(Quote itemToEdit);
+        Task EditCastCrewMember(CastCrewMember itemToEdit);
+        Task EditProductionRole(ProductionRole itemToEdit);
+        Task EditJobRole(JobRole itemToEdit);
+        Task EditCharacter(Character itemToEdit);
+
+        Task DeleteGenre(int id);
+        Task DeleteFact(int id);
+        Task DeleteFactType(int id);
+        Task DeleteRating(int id);
+        Task DeleteQuote(int id);
+        Task DeleteCastCrewMember(int id);
+        Task DeleteProductionRole(int id);
+        Task DeleteJobRole(int id);
+        Task DeleteCharacter(int id);
+
     }
 
     public class MyMDBService : IMyMDBService
     {
-        public MyMDBService(ApplicationDbContext context,
+        public MyMDBService(ApplicationDbContext databaseContext,
             ITVService tVService)
         {
-            Context = context;
+            DatabaseContext = databaseContext;
             TVService = tVService;
         }
 
-        public ApplicationDbContext Context { get; }
+        public ApplicationDbContext DatabaseContext { get; }
         public ITVService TVService { get; }
         public IMovieService MovieService { get; }
 
         public async Task<Genre> GetGenreById(int id)
         {
-            var x = await Context.Genres
+            var x = await DatabaseContext.Genres
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
             return x;
@@ -58,7 +90,7 @@ namespace MyMDB.Services
 
         public async Task<Fact> GetFactById(int id)
         {
-            var fact = await Context.Facts
+            var fact = await DatabaseContext.Facts
                         .AsNoTracking()
                         .Include(e => e.FactType)
                         .Include(e => e.CastCrewMember)
@@ -71,7 +103,7 @@ namespace MyMDB.Services
 
         public async Task<FactType> GetFactTypeById(int id)
         {
-            var factType = await Context.FactTypes
+            var factType = await DatabaseContext.FactTypes
                             .AsNoTracking()
                             .FirstOrDefaultAsync(e => e.Id == id);
             return factType;
@@ -79,7 +111,7 @@ namespace MyMDB.Services
 
         public async Task<Rating> GetRatingById(int id)
         {
-            var rating = await Context.Ratings
+            var rating = await DatabaseContext.Ratings
                             .AsNoTracking()
                             .Include(e => e.Movie)
                             .Include(e => e.Episode)
@@ -89,7 +121,7 @@ namespace MyMDB.Services
 
         public async Task<Quote> GetQuoteById(int id)
         {
-            var quote = await Context.Quotes
+            var quote = await DatabaseContext.Quotes
                             .AsNoTracking()
                             .Include(e => e.Character)
                             .Include(e => e.Movie)
@@ -100,107 +132,113 @@ namespace MyMDB.Services
 
         public async Task<IEnumerable<Quote>> GetAllQuotes()
         {
-            var quotes = await Context.Quotes
+            var quotes = await DatabaseContext.Quotes
                             .AsNoTracking()
                             .Include(e => e.Character)
                             .Include(e => e.Movie)
                             .Include(e => e.Episode)
+                            .Where(e => e.Deleted == false)
                             .ToListAsync();
             return quotes;
         }
 
         public async Task<IEnumerable<Genre>> GetAllGenres()
         {
-            var genres = await Context.Genres
+            var genres = await DatabaseContext.Genres
                 .AsNoTracking()
+                .Where(e => e.Deleted == false)
                 .ToListAsync();
             return genres;
         }
 
         public async Task<IEnumerable<Fact>> GetAllFacts()
         {
-            var facts = await Context.Facts
+            var facts = await DatabaseContext.Facts
                         .AsNoTracking()
                         .Include(e => e.FactType)
                         .Include(e => e.CastCrewMember)
                         .Include(e => e.Episode)
                         .Include(e => e.TVShow)
                         .Include(e => e.Movie)
+                        .Where(e => e.Deleted == false)
                         .ToListAsync();
             return facts;
         }
 
         public async Task<IEnumerable<FactType>> GetAllFactTypes()
         {
-            var factTypes = await Context.FactTypes
+            var factTypes = await DatabaseContext.FactTypes
                             .AsNoTracking()
+                            .Where(e => e.Deleted == false)
                             .ToListAsync();
             return factTypes;
         }
 
         public async Task<IEnumerable<Rating>> GetAllRatings()
         {
-            var ratings = await Context.Ratings
+            var ratings = await DatabaseContext.Ratings
                             .AsNoTracking()
                             .Include(e => e.Movie)
                             .Include(e => e.Episode)
+                            .Where(e => e.Deleted == false)
                             .ToListAsync();
             return ratings;
         }
 
         public async Task<IEnumerable<Quote>> GetQuotesByMovieId(int id)
         {
-            var quotes = await Context.Quotes
+            var quotes = await DatabaseContext.Quotes
                 .AsNoTracking()
-                .Where(e => e.MovieId == id).
-                ToListAsync();
+                .Where(e => e.MovieId == id)
+                .Where(e => e.Deleted == false)
+                .ToListAsync();
             return quotes;
         }
 
         public async Task<IEnumerable<CastCrewMember>> GetAllCastCrewMembers()
         {
-            var castCrewMembers = await Context.CastCrewMember
+            var castCrewMembers = await DatabaseContext.CastCrewMember
                 .AsNoTracking()
+                .Where(e => e.Deleted == false)
                 .ToListAsync();
             return castCrewMembers;
         }
 
         public async Task<IEnumerable<Character>> GetAllCharacters()
         {
-            var characters = await Context.Characters
+            var characters = await DatabaseContext.Characters
                             .AsNoTracking()
+                            .Where(e => e.Deleted == false)
                             .ToListAsync();
             return characters;
         }
 
         public async Task<IEnumerable<ProductionRole>> GetAllProductionRoles()
         {
-            var productionRoles = await Context.ProductionRoles
+            var productionRoles = await DatabaseContext.ProductionRoles
                             .AsNoTracking()
                             .Include(e => e.CastCrewMember)
                             .Include(e => e.JobRole)
                             .Include(e => e.Character)
                             .Include(e => e.Movie)
                             .Include(e => e.Episode)
+                            .Where(e => e.Deleted == false)
                             .ToListAsync();
             return productionRoles;
         }
 
         public async Task<IEnumerable<JobRole>> GetAllJobRoles()
         {
-            var jobRoles = await Context.JobRoles
+            var jobRoles = await DatabaseContext.JobRoles
                             .AsNoTracking()
+                            .Where(e => e.Deleted == false)
                             .ToListAsync();
             return jobRoles;
         }
 
         public async Task<CastCrewMember> GetCastCrewMemberById(int id)
         {
-            var x = await Context.CastCrewMember
-                .Include(e => e.AwardRecipients)
-                .ThenInclude(e => e.Award)
-                .Include(e => e.AwardRecipients)
-                .ThenInclude(e => e.AwardCategory)
+            var x = await DatabaseContext.CastCrewMember
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
             return x;
@@ -208,7 +246,7 @@ namespace MyMDB.Services
 
         public async Task<Character> GetCharacterById(int id)
         {
-            var character = await Context.Characters
+            var character = await DatabaseContext.Characters
                             .AsNoTracking()
                             .FirstOrDefaultAsync(e => e.Id == id);
             return character;
@@ -216,7 +254,7 @@ namespace MyMDB.Services
 
         public async Task<ProductionRole> GetProductionRoleById(int id)
         {
-            var productionRole = await Context.ProductionRoles
+            var productionRole = await DatabaseContext.ProductionRoles
                             .AsNoTracking()
                             .Include(e => e.CastCrewMember)
                             .Include(e => e.JobRole)
@@ -229,7 +267,7 @@ namespace MyMDB.Services
 
         public async Task<JobRole> GetJobRoleById(int id)
         {
-            var jobRole = await Context.JobRoles
+            var jobRole = await DatabaseContext.JobRoles
                             .AsNoTracking()
                             .FirstOrDefaultAsync(e => e.Id == id);
             return jobRole;
@@ -238,10 +276,9 @@ namespace MyMDB.Services
         public async Task<IEnumerable<ProductionRole>> GetProductionRolesByCastCrewMemberId(int id)
         {
             var castCrewMember = await GetCastCrewMemberById(id);
-            var roles = await Context.ProductionRoles
+            var roles = await DatabaseContext.ProductionRoles
                 .Include(e => e.Movie)
                 .Include(e => e.Episode)
-                .Include(e => e.MediaFiles)
                 .Include(e => e.Character)
                 .Include(e => e.JobRole)
                 .AsNoTracking()
@@ -254,10 +291,9 @@ namespace MyMDB.Services
         public async Task<IEnumerable<ProductionRole>> GetProductionRolesByEpisodeId(int id)
         {
             var epsisode = await TVService.GetEpisodeById(id);
-            var roles = await Context.ProductionRoles
+            var roles = await DatabaseContext.ProductionRoles
                 .Include(e => e.Movie)
                 .Include(e => e.Episode)
-                .Include(e => e.MediaFiles)
                 .Include(e => e.Character)
                 .Include(e => e.JobRole)
                 .AsNoTracking()
@@ -275,10 +311,10 @@ namespace MyMDB.Services
             var roles = new List<ProductionRole>();
             foreach (var episode in episodes)
             {
-                foreach (var role in episode.ProductionRoles)
-                {
-                    roles.Add(role);
-                }
+                //foreach (var role in episode.ProductionRoles)
+                //{
+                //    roles.Add(role);
+                //}
             }
             return roles;
         }
@@ -286,11 +322,10 @@ namespace MyMDB.Services
         public async Task<IEnumerable<ProductionRole>> GetProductionRolesByCharacterId(int id)
         {
             var character = await GetCharacterById(id);
-            var roles = await Context.ProductionRoles
+            var roles = await DatabaseContext.ProductionRoles
                 .AsNoTracking()
                 .Include(e => e.Movie)
                 .Include(e => e.Episode)
-                .Include(e => e.MediaFiles)
                 .Include(e => e.Character)
                 .Include(e => e.CastCrewMember)
                 .Include(e => e.JobRole)
@@ -299,5 +334,202 @@ namespace MyMDB.Services
             return roles;
         }
 
+        public async Task DeleteGenre(int id)
+        {
+            var item = await GetGenreById(id);
+            item.Deleted = true;
+            DatabaseContext.Genres.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteFact(int id)
+        {
+            var item = await GetFactById(id);
+            item.Deleted = true;
+            DatabaseContext.Facts.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteFactType(int id)
+        {
+            var item = await GetFactTypeById(id);
+            item.Deleted = true;
+            DatabaseContext.FactTypes.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteRating(int id)
+        {
+            var item = await GetRatingById(id);
+            item.Deleted = true;
+            DatabaseContext.Ratings.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteQuote(int id)
+        {
+            var item = await GetQuoteById(id);
+            item.Deleted = true;
+            DatabaseContext.Quotes.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteCastCrewMember(int id)
+        {
+            var item = await GetCastCrewMemberById(id);
+            item.Deleted = true;
+            DatabaseContext.CastCrewMember.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteProductionRole(int id)
+        {
+            var item = await GetProductionRoleById(id);
+            item.Deleted = true;
+            DatabaseContext.ProductionRoles.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteJobRole(int id)
+        {
+            var item = await GetJobRoleById(id);
+            item.Deleted = true;
+            DatabaseContext.JobRoles.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteCharacter(int id)
+        {
+            var item = await GetCharacterById(id);
+            item.Deleted = true;
+            DatabaseContext.Characters.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddGenre(Genre itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddFact(Fact itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddFactType(FactType itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddRating(Rating itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddQuote(Quote itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddCastCrewMember(CastCrewMember itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddProductionRole(ProductionRole itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddJobRole(JobRole itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddCharacter(Character itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditGenre(Genre itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditFact(Fact itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditFactType(FactType itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditRating(Rating itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditQuote(Quote itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditCastCrewMember(CastCrewMember itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditProductionRole(ProductionRole itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditJobRole(JobRole itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditCharacter(Character itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
     }
 }

@@ -66,13 +66,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                episode.Created = DateTime.Now.ToLocalTime();
-                _context.Add(episode);
-                await _context.SaveChangesAsync();
-
-                var tvShow = await TVService.GetTVShowById(episode.TVShowId);
-                tvShow.Episodes.Add(episode);
-                _context.TVShows.Update(tvShow);
+                await TVService.AddEpisode(episode);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
@@ -112,9 +106,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    episode.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(episode);
-                    await _context.SaveChangesAsync();
+                    await TVService.EditEpisode(episode);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -155,8 +147,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var episode = await TVService.GetEpisodeById(id);
-            _context.Episodes.Remove(episode);
-            await _context.SaveChangesAsync();
+            await TVService.DeleteEpisode(episode.Id);
             return RedirectToAction(nameof(Index));
         }
 

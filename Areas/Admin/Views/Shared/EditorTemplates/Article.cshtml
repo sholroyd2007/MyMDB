@@ -1,0 +1,103 @@
+﻿@model Article
+<input type="hidden" asp-for="Created" />
+<input type="hidden" asp-for="Edited" value="@DateTime.UtcNow" />
+<input type="hidden" asp-for="Deleted" />
+
+<div class="form-group">
+    <label asp-for="Name" class="control-label"></label>
+    <input asp-for="Name" class="form-control" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Description" class="control-label"></label>
+    <input asp-for="Description" class="form-control" />
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="MovieId">Movie</label>
+    <select class="form-control os-dropdown" asp-for="MovieId">
+        <option value=""></option>
+        @foreach (var item in await MovieService.GetAllMovies())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="TVShowId">TV Show</label>
+    <select class="form-control os-dropdown" asp-for="TVShowId">
+        <option value=""></option>
+        @foreach (var item in await TVService.GetAllTVShows())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="EpisodeId">Episode</label>
+    <select class="form-control os-dropdown" asp-for="EpisodeId">
+        <option value=""></option>
+        @foreach (var item in await TVService.GetAllEpisodes())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="AwardId">Award</label>
+    <select class="form-control os-dropdown" asp-for="AwardId">
+        <option value=""></option>
+        @foreach (var item in await AwardService.GetAllAwards())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="CharacterId">Character</label>
+    <select class="form-control os-dropdown" asp-for="CharacterId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllCharacters())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="CastCrewMemberId">Cast Crew Member</label>
+    <select class="form-control os-dropdown" asp-for="CastCrewMemberId">
+        <option value=""></option>
+        @foreach (var item in await MyMDBService.GetAllCastCrewMembers())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="MovieSeriesId">Movie Series</label>
+    <select class="form-control os-dropdown" asp-for="MovieSeriesId">
+        <option value=""></option>
+        @foreach (var item in await MovieService.GetAllMovieSeries())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label asp-for="MovieStudioId">Movie Studios</label>
+    <select class="form-control os-dropdown" asp-for="MovieStudioId">
+        <option value=""></option>
+        @foreach (var item in await MovieService.GetAllMovieStudios())
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+</div>

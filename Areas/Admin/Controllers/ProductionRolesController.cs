@@ -69,26 +69,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                productionRole.Created = DateTime.Now.ToLocalTime();
-                _context.Add(productionRole);
-                await _context.SaveChangesAsync();
-
-
-                if (productionRole.EpisodeId != null)
-                {
-                    var episode = await TVService.GetEpisodeById(productionRole.EpisodeId.Value);
-                    episode.ProductionRoles.Add(productionRole);
-                    _context.Episodes.Update(episode);
-                    await _context.SaveChangesAsync();
-                }
-
-                if (productionRole.MovieId != null)
-                {
-                    var movie = await MovieService.GetMovieById(productionRole.MovieId.Value);
-                    movie.ProductionRoles.Add(productionRole);
-                    _context.Movies.Update(movie);
-                    await _context.SaveChangesAsync();
-                }
+                await MyMDBService.AddProductionRole(productionRole);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -128,9 +109,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    productionRole.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(productionRole);
-                    await _context.SaveChangesAsync();
+                    await MyMDBService.EditProductionRole(productionRole);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -171,8 +150,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var productionRole = await MyMDBService.GetProductionRoleById(id);
-            _context.ProductionRoles.Remove(productionRole);
-            await _context.SaveChangesAsync();
+            await MyMDBService.DeleteProductionRole(productionRole.Id);
             return RedirectToAction(nameof(Index));
         }
 

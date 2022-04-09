@@ -63,9 +63,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                rating.Created = DateTime.Now.ToLocalTime();
-                _context.Add(rating);
-                await _context.SaveChangesAsync();
+                await MyMDBService.AddRating(rating);
                 return RedirectToAction(nameof(Index));
             }
             return View(rating);
@@ -103,9 +101,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    rating.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(rating);
-                    await _context.SaveChangesAsync();
+                    await MyMDBService.EditRating(rating);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -146,8 +142,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var rating = await MyMDBService.GetRatingById(id);
-            _context.Ratings.Remove(rating);
-            await _context.SaveChangesAsync();
+            await MyMDBService.DeleteRating(rating.Id);
             return RedirectToAction(nameof(Index));
         }
 

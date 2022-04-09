@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MyMDB.Models
 {
@@ -10,5 +11,7 @@ namespace MyMDB.Models
         public DateTime? Died { get; set; }
 
         public string From { get; set; }
+
+        public string Website { get; set; }
     }
 }

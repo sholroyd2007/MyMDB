@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MyMDB.Models
 {
@@ -10,25 +11,18 @@ namespace MyMDB.Models
         public double? Budget { get; set; }
         
         public DateTime? Release { get; set; }
-        
-        public List<ProductionRole> ProductionRoles { get; set; }
-        
-        public List<Genre> Genres { get; set; }
-        
-        public List<Rating> Ratings { get; set; }
-        
+               
+        public Collection<Genre> Genres { get; set; }
+             
         public string Tagline { get; set; }
 
         public MovieStudio MovieStudio { get; set; }
         public int MovieStudioId { get; set; }
         public int Length { get; set; }
 
-        public Movie()
-        {
-            ProductionRoles = new List<ProductionRole>();
-            Genres = new List<Genre>();
-            Ratings = new List<Rating>();
-        }
+        public string Language { get; set; }
+
+        public string Website { get; set; }
 
     }
 }

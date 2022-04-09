@@ -2,10 +2,6 @@
 
 @{
     ViewData["Title"] = "Details";
-    var roles = await MyMDBService.GetProductionRolesByCastCrewMemberId(Model.Id);
-    var actingRoles = roles.Where(e => e.JobRole.Name == "Actor");
-    var directingRoles = roles.Where(e => e.JobRole.Name == "Director");
-    var producingRoles = roles.Where(e => e.JobRole.Name == "Producer");
 }
 
 <h1>Details</h1>
@@ -16,115 +12,7 @@
     @Html.EditorForModel()
     <hr />
     <h4>Roles</h4>
-    @if (actingRoles.Any())
-    {
-        <h5>Actor</h5>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col">Character</th>
-                    <th scope="col">Year</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in actingRoles)
-                {
-                    <tr>
-                        <td>
-                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Name)
-                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Name))
-                        </td>
-                        <td>@item.Character.Name</td>
-                        <td>
-                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
-                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    @if (directingRoles.Any())
-    {
-        <h5>Director</h5>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col">Year</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in directingRoles)
-                {
-                    <tr>
-                        <td>
-                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Name)
-                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Name))
-                        </td>
-                        <td>
-                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
-                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    @if (producingRoles.Any())
-    {
-        <h5>Producer</h5>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col">Year</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in producingRoles)
-                {
-                    <tr>
-                        <td>
-                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Name)
-                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Name))
-                        </td>
-                        <td>
-                            @(item.MovieId != null ? ((await MovieService.GetMovieById(item.MovieId.Value)).Release.Value.ToString("yyyy"))
-                    : ((await TVService.GetTVShowById(item.Episode.TVShowId)).Episodes.FirstOrDefault().AirDate.ToString("yyyy")))
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    @if (Model.AwardRecipients.Any())
-    {
-        <h4>Awards</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Award</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Year</th>
-                    <th scope="col">Win</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.AwardRecipients)
-                {
-                    <tr>
-                        <td>@item.Award.Name</td>
-                        <td>@item.AwardCategory.Name</td>
-                        <td>@item.Year</td>
-                        <td>@(item.Win ? "Win" : "Nominated")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-
+   
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

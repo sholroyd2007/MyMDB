@@ -63,9 +63,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                genre.Created = DateTime.Now.ToLocalTime();
-                _context.Add(genre);
-                await _context.SaveChangesAsync();
+                await MyMDBService.AddGenre(genre);
                 return RedirectToAction(nameof(Index));
             }
             return View(genre);
@@ -103,9 +101,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    genre.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(genre);
-                    await _context.SaveChangesAsync();
+                    await MyMDBService.EditGenre(genre);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -146,8 +142,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var genre = await MyMDBService.GetGenreById(id);
-            _context.Genres.Remove(genre);
-            await _context.SaveChangesAsync();
+            await MyMDBService.DeleteGenre(genre.Id);
             return RedirectToAction(nameof(Index));
         }
 

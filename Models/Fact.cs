@@ -24,5 +24,7 @@ namespace MyMDB.Models
 
         public DateTime Created { get; set; }
         public DateTime? Edited { get; set; }
+
+        public bool Deleted { get; set; }
     }
 }

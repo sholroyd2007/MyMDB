@@ -74,37 +74,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (awardRecipient.CastCrewMemberId != null)
-                {
-                    var castCrew = await MyMDBService.GetCastCrewMemberById(awardRecipient.CastCrewMemberId.Value);
-                    castCrew.AwardRecipients.Add(awardRecipient);
-                    _context.Update(castCrew);
-                }
-
-                if (awardRecipient.MovieId != null)
-                {
-                    var movie = await MovieService.GetMovieById(awardRecipient.MovieId.Value);
-                    movie.AwardRecipients.Add(awardRecipient);
-                    _context.Update(movie);
-                }
-
-                if (awardRecipient.EpisodeId != null)
-                {
-                    var episode = await TVService.GetEpisodeById(awardRecipient.EpisodeId.Value);
-                    episode.AwardRecipients.Add(awardRecipient);
-                    _context.Update(episode);
-                }
-
-                if (awardRecipient.TVShowId != null)
-                {
-                    var tvShow = await TVService.GetTVShowById(awardRecipient.TVShowId.Value);
-                    tvShow.AwardRecipients.Add(awardRecipient);
-                    _context.Update(tvShow);
-                }
-
-                awardRecipient.Created = DateTime.Now.ToLocalTime();
-                _context.Add(awardRecipient);
-                await _context.SaveChangesAsync();
+                await AwardService.AddAwardRecipient(awardRecipient);
                 return RedirectToAction(nameof(Index));
             }
             return View(awardRecipient);
@@ -142,8 +112,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    awardRecipient.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(awardRecipient);
+                    await AwardService.EditAwardRecipient(awardRecipient);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -185,8 +154,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var awardRecipient = await AwardService.GetAwardRecipientById(id);
-            _context.ActorAwards.Remove(awardRecipient);
-            await _context.SaveChangesAsync();
+            await AwardService.DeleteAwardRecipient(awardRecipient.Id);
             return RedirectToAction(nameof(Index));
         }
 

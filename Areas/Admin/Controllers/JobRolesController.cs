@@ -61,9 +61,7 @@ namespace MyMDB.Areas.Admin
         {
             if (ModelState.IsValid)
             {
-                jobRole.Created = DateTime.Now.ToLocalTime();
-                _context.Add(jobRole);
-                await _context.SaveChangesAsync();
+                await MyMDBService.AddJobRole(jobRole);
                 return RedirectToAction(nameof(Index));
             }
             return View(jobRole);
@@ -101,9 +99,7 @@ namespace MyMDB.Areas.Admin
             {
                 try
                 {
-                    jobRole.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(jobRole);
-                    await _context.SaveChangesAsync();
+                    await MyMDBService.EditJobRole(jobRole);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -144,8 +140,7 @@ namespace MyMDB.Areas.Admin
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var jobRole = await MyMDBService.GetJobRoleById(id);
-            _context.JobRoles.Remove(jobRole);
-            await _context.SaveChangesAsync();
+            await MyMDBService.DeleteJobRole(jobRole.Id);
             return RedirectToAction(nameof(Index));
         }
 

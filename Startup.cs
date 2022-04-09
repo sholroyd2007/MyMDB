@@ -46,6 +46,10 @@ namespace MyMDB
             services.AddTransient<TVService>();
             services.AddTransient<IMovieService, MovieService>();
             services.AddTransient<MovieService>();
+            services.AddTransient<IMediaService, MediaService>();
+            services.AddTransient<MediaService>();
+            services.AddTransient<IArticleService, ArticleService>();
+            services.AddTransient<ArticleService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyMDB.Data;
 using MyMDB.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,20 +17,30 @@ namespace MyMDB.Services
         Task<IEnumerable<TVShow>> GetTVShowsByGenre(int id);
         Task<IEnumerable<Episode>> GetEpisodesByTVShowId(int id);
         Task<int> GetEpisodeCountByProductionRoleId(int id);
+
+        Task AddTVShow(TVShow itemToAdd);
+        Task AddEpisode(Episode itemToAdd);
+
+        Task EditTVShow(TVShow itemToEdit);
+        Task EditEpisode(Episode itemToEdit);
+
+        Task DeleteEpisode(int id);
+        Task DeleteTVShow(int id);
     }
 
     public class TVService : ITVService
     {
-        public TVService(ApplicationDbContext context)
+        public ApplicationDbContext DatabaseContext { get; }
+
+        public TVService(ApplicationDbContext databaseContext)
         {
-            Context = context;
+            DatabaseContext = databaseContext;
         }
 
-        public ApplicationDbContext Context { get; }
 
         public async Task<IEnumerable<TVShow>> GetAllTVShows()
         {
-            var shows = await Context.TVShows
+            var shows = await DatabaseContext.TVShows
                 .AsNoTracking()
                 .ToListAsync();
             return shows;
@@ -37,7 +48,7 @@ namespace MyMDB.Services
 
         public async Task<IEnumerable<TVShow>> GetTVShowsByGenre(int id)
         {
-            var genre = await Context.Genres
+            var genre = await DatabaseContext.Genres
                 .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
 
@@ -57,22 +68,15 @@ namespace MyMDB.Services
 
         public async Task<TVShow> GetTVShowById(int id)
         {
-            var show = await Context.TVShows
-                .Include(e => e.AwardRecipients)
-                .ThenInclude(e => e.Award)
-                .Include(e => e.AwardRecipients)
-                .ThenInclude(e => e.AwardCategory)
-                .Include(e => e.AwardRecipients)
-                .ThenInclude(e => e.CastCrewMember)
+            var show = await DatabaseContext.TVShows
                 .AsNoTracking()
-                .Include(e => e.Episodes)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return show;
         }
 
         public async Task<IEnumerable<Episode>> GetAllEpisodes()
         {
-            var episodes = await Context.Episodes
+            var episodes = await DatabaseContext.Episodes
                 .AsNoTracking()
                 .Include(e => e.TVShow)
                 .ToListAsync();
@@ -80,13 +84,7 @@ namespace MyMDB.Services
         }
         public async Task<Episode> GetEpisodeById(int id)
         {
-            var x = await Context.Episodes
-                .Include(e => e.AwardRecipients)
-                .ThenInclude(e => e.Award)
-                .Include(e => e.AwardRecipients)
-                .ThenInclude(e => e.AwardCategory)
-                .Include(e => e.AwardRecipients)
-                .ThenInclude(e => e.CastCrewMember)
+            var x = await DatabaseContext.Episodes
                 .AsNoTracking()
                 .Include(e => e.TVShow)
                 .FirstOrDefaultAsync(e => e.Id == id);
@@ -96,8 +94,7 @@ namespace MyMDB.Services
         public async Task<IEnumerable<Episode>> GetEpisodesByTVShowId(int id)
         {
             var tvShow = await GetTVShowById(id);
-            var episodes = await Context.Episodes.AsNoTracking()
-                .Include(e => e.ProductionRoles)
+            var episodes = await DatabaseContext.Episodes.AsNoTracking()
                 .Where(e => e.TVShowId == tvShow.Id)
                 .ToListAsync();
             return episodes;
@@ -105,7 +102,7 @@ namespace MyMDB.Services
 
         public async Task<int> GetEpisodeCountByProductionRoleId(int id)
         {
-            var productionRole = await Context.ProductionRoles
+            var productionRole = await DatabaseContext.ProductionRoles
                             .AsNoTracking()
                             .Include(e => e.CastCrewMember)
                             .Include(e => e.JobRole)
@@ -114,7 +111,7 @@ namespace MyMDB.Services
                             .Include(e => e.Episode)
                             .FirstOrDefaultAsync(e => e.Id == id);
 
-            var roles = await Context.ProductionRoles.AsNoTracking()
+            var roles = await DatabaseContext.ProductionRoles.AsNoTracking()
                 .Where(e => e.CastCrewMemberId == productionRole.CastCrewMemberId
                 && e.JobRoleId == productionRole.JobRoleId
                 && e.Episode.TVShowId == productionRole.Episode.TVShowId)
@@ -123,6 +120,48 @@ namespace MyMDB.Services
             return roles.Count();
         }
 
+        public async Task DeleteEpisode(int id)
+        {
+            var item = await GetEpisodeById(id);
+            item.Deleted = true;
+            DatabaseContext.Episodes.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
 
+        public async Task DeleteTVShow(int id)
+        {
+            var item = await GetTVShowById(id);
+            item.Deleted = true;
+            DatabaseContext.TVShows.Update(item);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddTVShow(TVShow itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task AddEpisode(Episode itemToAdd)
+        {
+            itemToAdd.Created = DateTime.UtcNow;
+            DatabaseContext.Add(itemToAdd);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditTVShow(TVShow itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task EditEpisode(Episode itemToEdit)
+        {
+            itemToEdit.Edited = DateTime.UtcNow;
+            DatabaseContext.Update(itemToEdit);
+            await DatabaseContext.SaveChangesAsync();
+        }
     }
 }

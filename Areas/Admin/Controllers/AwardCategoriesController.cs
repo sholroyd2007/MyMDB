@@ -66,9 +66,7 @@ namespace MyMDB.Areas.Admin
         {
             if (ModelState.IsValid)
             {
-                awardCategory.Created = DateTime.Now.ToLocalTime();
-                _context.Add(awardCategory);
-                await _context.SaveChangesAsync();
+                await AwardService.AddAwardCategory(awardCategory);
                 return RedirectToAction(nameof(Index));
             }
             return View(awardCategory);
@@ -106,9 +104,7 @@ namespace MyMDB.Areas.Admin
             {
                 try
                 {
-                    awardCategory.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(awardCategory);
-                    await _context.SaveChangesAsync();
+                    await AwardService.EditAwardCategory(awardCategory);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -149,8 +145,7 @@ namespace MyMDB.Areas.Admin
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var awardCategory = await AwardService.GetAwardCategoryById(id);
-            _context.AwardCategories.Remove(awardCategory);
-            await _context.SaveChangesAsync();
+            await AwardService.DeleteAwardCategory(awardCategory.Id);
             return RedirectToAction(nameof(Index));
         }
 

@@ -37,14 +37,12 @@
             <td>
                 | 
                     @(item.MovieId != null ? $"{@item?.Movie?.Name} |" : "")
-                    @(item.CastCrewMemberId != null ? $"{@item?.CastCrewMember?.Name} |" : "")
                     @(item.TVShowId != null ? $"{@item?.TVShow?.Name} |" : "")
                     @(item.EpisodeId != null ? $"{@item?.Episode?.Name} |" : "")
                     @(item.AwardId != null ? $"{@item?.Award?.Name} |" : "")
                     @(item.GenreId != null ? $"{@item?.Genre?.Name} |" : "")
                     @(item.MovieSeriesId != null ? $"{@item?.MovieSeries?.Name} |" : "")
                     @(item.MovieStudioId != null ? $"{@item?.MovieStudio?.Name} |" : "")
-                    @(item.CharacterId != null ? $"{@item?.Character?.Name} |" : "")
             </td>
             <td>
                 @item.Created.ToString("dd MMM yyyy")

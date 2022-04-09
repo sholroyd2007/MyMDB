@@ -14,16 +14,15 @@ namespace MyMDB.Areas.Admin.Controllers
     [Area("Admin")]
     public class TVShowsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
+        public ApplicationDbContext DatabaseContext { get; }
         public IMyMDBService MyMDBService { get; }
         public ITVService TVService { get; }
 
-        public TVShowsController(ApplicationDbContext context,
+        public TVShowsController(ApplicationDbContext databaseContext,
             IMyMDBService myMDBService,
             ITVService tVService)
         {
-            _context = context;
+            DatabaseContext = databaseContext;
             MyMDBService = myMDBService;
             TVService = tVService;
         }
@@ -66,9 +65,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                tVShow.Created = DateTime.Now.ToLocalTime();
-                _context.Add(tVShow);
-                await _context.SaveChangesAsync();
+                await TVService.AddTVShow(tVShow);
                 return RedirectToAction(nameof(Index));
             }
             return View(tVShow);
@@ -106,9 +103,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    tVShow.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(tVShow);
-                    await _context.SaveChangesAsync();
+                    await TVService.EditTVShow(tVShow);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -149,14 +144,13 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tVShow = await TVService.GetTVShowById(id);
-            _context.TVShows.Remove(tVShow);
-            await _context.SaveChangesAsync();
+            await TVService.DeleteTVShow(tVShow.Id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool TVShowExists(int id)
         {
-            return _context.TVShows.Any(e => e.Id == id);
+            return DatabaseContext.TVShows.Any(e => e.Id == id);
         }
     }
 }

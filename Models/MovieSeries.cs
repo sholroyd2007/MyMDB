@@ -1,14 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MyMDB.Models
 {
     public class MovieSeries : Entity
     {
-        public List<Movie> Movies { get; set; }
-
-        public MovieSeries()
-        {
-            Movies = new List<Movie>();
-        }
+        public Collection<Movie> Movies { get; set; }
     }
 }

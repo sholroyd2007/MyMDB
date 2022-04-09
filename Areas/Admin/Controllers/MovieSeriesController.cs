@@ -66,9 +66,7 @@ namespace MyMDB.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                movieSeries.Created = DateTime.Now.ToLocalTime();
-                _context.Add(movieSeries);
-                await _context.SaveChangesAsync();
+                await MovieService.AddMovieSeries(movieSeries);
                 return RedirectToAction(nameof(Index));
             }
             return View(movieSeries);
@@ -106,9 +104,7 @@ namespace MyMDB.Areas.Admin.Controllers
             {
                 try
                 {
-                    movieSeries.Edited = DateTime.Now.ToLocalTime();
-                    _context.Update(movieSeries);
-                    await _context.SaveChangesAsync();
+                    await MovieService.EditMovieSeries(movieSeries);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -149,8 +145,7 @@ namespace MyMDB.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var movieSeries = await MovieService.GetMovieSeriesById(id);
-            _context.MovieSeries.Remove(movieSeries);
-            await _context.SaveChangesAsync();
+            await MovieService.DeleteMovieSeries(movieSeries.Id);
             return RedirectToAction(nameof(Index));
         }
 

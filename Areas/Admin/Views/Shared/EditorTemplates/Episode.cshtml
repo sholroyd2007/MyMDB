@@ -1,4 +1,8 @@
 ﻿@model Episode
+<input type="hidden" asp-for="Created" />
+<input type="hidden" asp-for="Edited" value="@DateTime.UtcNow" />
+<input type="hidden" asp-for="Deleted" />
+
 <div class="form-group">
     <label asp-for="TVShowId">TV Show</label>
     <select class="form-control os-dropdown" asp-for="TVShowId">
@@ -35,13 +39,4 @@
     <span asp-validation-for="AirDate" class="text-danger"></span>
 </div>
 
-<div class="form-group">
-    <input class="form-check" type="checkbox" asp-for="Recommended" />
-    <label class="form-check-label" asp-for="Recommended ">Recommended?</label>
-</div>
 
-<div class="form-group">
-    <label asp-for="Language" class="control-label"></label>
-    <input asp-for="Language" class="form-control" />
-    <span asp-validation-for="Language" class="text-danger"></span>
-</div>
