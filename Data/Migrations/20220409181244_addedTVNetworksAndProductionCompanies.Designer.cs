@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyMDB.Data;
 
 namespace MyMDB.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220409181244_addedTVNetworksAndProductionCompanies")]
+    partial class addedTVNetworksAndProductionCompanies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -959,7 +961,7 @@ namespace MyMDB.Data.Migrations
                     b.ToTable("ProductionCompanies");
                 });
 
-            modelBuilder.Entity("MyMDB.Models.ProductionLink", b =>
+            modelBuilder.Entity("MyMDB.Models.ProductionCompanyMovie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -978,19 +980,13 @@ namespace MyMDB.Data.Migrations
                     b.Property<DateTime?>("Edited")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MovieId")
+                    b.Property<int>("MovieId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductionCompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TVNetworkId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TVShowId")
+                    b.Property<int>("ProductionCompanyId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -999,11 +995,7 @@ namespace MyMDB.Data.Migrations
 
                     b.HasIndex("ProductionCompanyId");
 
-                    b.HasIndex("TVNetworkId");
-
-                    b.HasIndex("TVShowId");
-
-                    b.ToTable("ProductionLinks");
+                    b.ToTable("ProductionCompanyMovies");
                 });
 
             modelBuilder.Entity("MyMDB.Models.ProductionRole", b =>
@@ -1208,6 +1200,48 @@ namespace MyMDB.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TVNetworks");
+                });
+
+            modelBuilder.Entity("MyMDB.Models.TVNetworkShow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Edited")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProductionCompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TVNetworkId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TVShowId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductionCompanyId");
+
+                    b.HasIndex("TVNetworkId");
+
+                    b.HasIndex("TVShowId");
+
+                    b.ToTable("TVNetworkShows");
                 });
 
             modelBuilder.Entity("MyMDB.Models.TVShow", b =>
@@ -1582,31 +1616,23 @@ namespace MyMDB.Data.Migrations
                         .HasForeignKey("ListArticleId");
                 });
 
-            modelBuilder.Entity("MyMDB.Models.ProductionLink", b =>
+            modelBuilder.Entity("MyMDB.Models.ProductionCompanyMovie", b =>
                 {
                     b.HasOne("MyMDB.Models.Movie", "Movie")
                         .WithMany()
-                        .HasForeignKey("MovieId");
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MyMDB.Models.ProductionCompany", "ProductionCompany")
                         .WithMany()
-                        .HasForeignKey("ProductionCompanyId");
-
-                    b.HasOne("MyMDB.Models.TVNetwork", "TVNetwork")
-                        .WithMany()
-                        .HasForeignKey("TVNetworkId");
-
-                    b.HasOne("MyMDB.Models.TVShow", "TVShow")
-                        .WithMany()
-                        .HasForeignKey("TVShowId");
+                        .HasForeignKey("ProductionCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Movie");
 
                     b.Navigation("ProductionCompany");
-
-                    b.Navigation("TVNetwork");
-
-                    b.Navigation("TVShow");
                 });
 
             modelBuilder.Entity("MyMDB.Models.ProductionRole", b =>
@@ -1699,6 +1725,29 @@ namespace MyMDB.Data.Migrations
                     b.Navigation("Movie");
 
                     b.Navigation("Series");
+                });
+
+            modelBuilder.Entity("MyMDB.Models.TVNetworkShow", b =>
+                {
+                    b.HasOne("MyMDB.Models.ProductionCompany", "ProductionCompany")
+                        .WithMany()
+                        .HasForeignKey("ProductionCompanyId");
+
+                    b.HasOne("MyMDB.Models.TVNetwork", "TVNetwork")
+                        .WithMany()
+                        .HasForeignKey("TVNetworkId");
+
+                    b.HasOne("MyMDB.Models.TVShow", "TVShow")
+                        .WithMany()
+                        .HasForeignKey("TVShowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductionCompany");
+
+                    b.Navigation("TVNetwork");
+
+                    b.Navigation("TVShow");
                 });
 
             modelBuilder.Entity("MyMDB.Models.TVShow", b =>

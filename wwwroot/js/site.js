@@ -16,4 +16,7 @@ $(document).ready(function () {
     $('#AwardCategory').select2();
     $('#Character').select2();
     $('#Genre').select2();
+    $('#Country').select2();
+    $('#TVNetwork').select2();
+    $('#ProductionCompany').select2();
 });
