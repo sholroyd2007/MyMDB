@@ -2,11 +2,8 @@
 
 namespace MyMDB.Models
 {
-    public class Fact
+    public class Fact : Entity
     {
-        public int Id { get; set; }
-        public string Description { get; set; }
-
         public FactType FactType { get; set; }
         public int FactTypeId { get; set; }
 
@@ -21,10 +18,5 @@ namespace MyMDB.Models
 
         public Movie Movie { get; set; }
         public int? MovieId { get; set; }
-
-        public DateTime Created { get; set; }
-        public DateTime? Edited { get; set; }
-
-        public bool Deleted { get; set; }
     }
 }

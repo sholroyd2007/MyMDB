@@ -13,6 +13,7 @@ namespace MyMDB.Models
         public int EpisodeNumber { get; set; }
 
         public TVShow TVShow { get; set; }
+
         public int TVShowId { get; set; }
     }
 }
