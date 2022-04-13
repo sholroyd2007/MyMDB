@@ -40,6 +40,9 @@ namespace MyMDB.Services
         Task DeleteMovieSeries(int id);
         Task DeleteMovieStudio(int id);
         Task DeleteSeriesMovie(int id);
+
+        Task<IEnumerable<Movie>> GetHomepageRecommendedMovies();
+        Task<IEnumerable<Movie>> GetHomepageComingSoonMovies();
     }
 
     public class MovieService : IMovieService
@@ -288,6 +291,18 @@ namespace MyMDB.Services
                 .Select(e => e.Genre)
                 .ToListAsync();
             return genres;
+        }
+
+        public async Task<IEnumerable<Movie>> GetHomepageRecommendedMovies()
+        {
+            var movies = await GetAllMovies();
+            return movies.Take(10);
+        }
+
+        public async Task<IEnumerable<Movie>> GetHomepageComingSoonMovies()
+        {
+            var movies = await GetAllMovies();
+            return movies.Where(e => e.Release < DateTime.Now.Date);
         }
     }
 }

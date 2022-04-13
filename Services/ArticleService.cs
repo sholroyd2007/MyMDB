@@ -22,6 +22,9 @@ namespace MyMDB.Services
         Task<IEnumerable<ListArticle>> GetListArticlesByAwardId(int id);
         Task<IEnumerable<ListArticle>> GetListArticlesByCharacterId(int id);
 
+        Task<IEnumerable<Article>> GetHomepageArticles();
+        Task<IEnumerable<ListArticle>> GetHomepageListArticles();
+
         Task<IEnumerable<Article>> GetArticlesByMovieId(int id);
         Task<IEnumerable<Article>> GetArticlesByEpisodeId(int id);
         Task<IEnumerable<Article>> GetArticlesByTVShowId(int id);
@@ -171,6 +174,20 @@ namespace MyMDB.Services
         {
             var allArticles = await GetAllArticles();
             return allArticles.Where(e => e.TVShowId == id);
+        }
+
+        public async Task<IEnumerable<Article>> GetHomepageArticles()
+        {
+            var allArticles = await GetAllArticles();
+            var homepageArticles = allArticles.Take(10);
+            return homepageArticles;
+        }
+
+        public async Task<IEnumerable<ListArticle>> GetHomepageListArticles()
+        {
+            var allListArticles = await GetAllListArticles();
+            var homepageListArticles = allListArticles.Take(10);
+            return homepageListArticles;
         }
 
         public async Task<ListArticle> GetListArticleById(int id)

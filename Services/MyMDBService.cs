@@ -71,6 +71,8 @@ namespace MyMDB.Services
         Task DeleteJobRole(int id);
         Task DeleteCharacter(int id);
 
+        Task<IEnumerable<CastCrewMember>> GetHomepageBirthdays();
+
     }
 
     public class MyMDBService : IMyMDBService
@@ -587,6 +589,13 @@ namespace MyMDB.Services
                 .FirstOrDefaultAsync(e => e.MovieId == movieId 
                 && e.GenreId == genreId);
             return genreLink;
+        }
+
+        public async Task<IEnumerable<CastCrewMember>> GetHomepageBirthdays()
+        {
+            var allCastCrew = await GetAllCastCrewMembers();
+            var birthdays = allCastCrew.Where(e => e.DOB == DateTime.Now.Date);
+            return birthdays;
         }
     }
 }

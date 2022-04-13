@@ -26,6 +26,9 @@ namespace MyMDB.Services
 
         Task DeleteEpisode(int id);
         Task DeleteTVShow(int id);
+
+        Task<IEnumerable<TVShow>> GetHomepageRecommendedTv();
+        Task<IEnumerable<Episode>> GetHomepageComingSoonTv();
     }
 
     public class TVService : ITVService
@@ -149,6 +152,18 @@ namespace MyMDB.Services
             itemToEdit.Edited = DateTime.UtcNow;
             DatabaseContext.Update(itemToEdit);
             await DatabaseContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<TVShow>> GetHomepageRecommendedTv()
+        {
+            var tvShows = await GetAllTVShows();
+            return tvShows.Take(10);
+        }
+
+        public async Task<IEnumerable<Episode>> GetHomepageComingSoonTv()
+        {
+            var episodes = await GetAllEpisodes();
+            return episodes.Where(e => e.AirDate < DateTime.Now.Date);
         }
     }
 }

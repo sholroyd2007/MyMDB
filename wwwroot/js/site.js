@@ -19,4 +19,5 @@ $(document).ready(function () {
     $('#Country').select2();
     $('#TVNetwork').select2();
     $('#ProductionCompany').select2();
+    
 });
