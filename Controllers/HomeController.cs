@@ -8,6 +8,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using MyMDB.ViewModels;
 using MyMDB.Services;
+using MyMDd;
+using System.Web;
+using MyMDB.Helpers;
 
 namespace MyMDB.Controllers
 {
@@ -19,18 +22,21 @@ namespace MyMDB.Controllers
         public IArticleService ArticleService { get; }
         public IMovieService MovieService { get; }
         public ITVService TVService { get; }
+        public ISlugService SlugService { get; }
 
         public HomeController(ILogger<HomeController> logger,
             IMyMDBService myMDBService,
             IArticleService articleService,
             IMovieService movieService,
-            ITVService tVService)
+            ITVService tVService,
+            ISlugService slugService)
         {
             _logger = logger;
             MyMDBService = myMDBService;
             ArticleService = articleService;
             MovieService = movieService;
             TVService = tVService;
+            SlugService = slugService;
         }
 
         public async Task<IActionResult> Index()
@@ -57,6 +63,29 @@ namespace MyMDB.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public async Task<IActionResult> Movie(string id)
+        {
+            Movie movie;
+            int movieId;
+            var inputIsId = int.TryParse(id, out movieId);
+
+            if (!inputIsId)
+            {
+                if (id.ContainsCharactersThatNeedEncoding())
+                {
+                    id = HttpUtility.UrlEncode(id);
+                    id = SlugHelper.Slugify(id);
+                }
+
+
+                movieId = await SlugService.GetEntityIdBySlug<Movie>(id);
+            }
+
+
+            movie = await MovieService.GetMovieById(movieId);
+            return View(movie);
         }
     }
 }

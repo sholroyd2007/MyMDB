@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text.RegularExpressions;
 
 namespace MyMDd
 {
@@ -37,6 +38,12 @@ namespace MyMDd
                 }
             }
             return new string(array);
+        }
+
+        public static bool ContainsCharactersThatNeedEncoding(this string token)
+        {
+            Regex rg = new Regex(@"^[a-zA-Z0-9-%]*$");
+            return !rg.IsMatch(token);
         }
     }
 }
