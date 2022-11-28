@@ -41,5 +41,6 @@ namespace MyMDB.Data
         public DbSet<ProductionLink> ProductionLinks { get; set; }
         public DbSet<TVNetwork> TVNetworks { get; set; }
         public DbSet<Slug> Slugs { get; set; }
+        public DbSet<Featured> Featured { get; set; }
     }
 }

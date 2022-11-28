@@ -295,8 +295,12 @@ namespace MyMDB.Services
 
         public async Task<IEnumerable<Movie>> GetHomepageRecommendedMovies()
         {
-            var movies = await GetAllMovies();
-            return movies.Take(10);
+            var movies = await DatabaseContext.Featured
+                .AsNoTracking()
+                .Where(e => e.MovieId != null && e.Recommended)
+                .Select(e => e.Movie)
+                .ToListAsync();
+            return movies;
         }
 
         public async Task<IEnumerable<Movie>> GetHomepageComingSoonMovies()

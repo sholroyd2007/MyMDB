@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyMDB.Data;
 
 namespace MyMDB.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221128105339_removeOldFeatured")]
+    partial class removeOldFeatured
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -617,52 +619,6 @@ namespace MyMDB.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FactTypes");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.Featured", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Banner")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Edited")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("EditorPick")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Recommended")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("TVShowId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("TVShowId");
-
-                    b.ToTable("Featured");
                 });
 
             modelBuilder.Entity("MyMDB.Models.Genre", b =>
@@ -1558,21 +1514,6 @@ namespace MyMDB.Data.Migrations
                     b.Navigation("Episode");
 
                     b.Navigation("FactType");
-
-                    b.Navigation("Movie");
-
-                    b.Navigation("TVShow");
-                });
-
-            modelBuilder.Entity("MyMDB.Models.Featured", b =>
-                {
-                    b.HasOne("MyMDB.Models.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId");
-
-                    b.HasOne("MyMDB.Models.TVShow", "TVShow")
-                        .WithMany()
-                        .HasForeignKey("TVShowId");
 
                     b.Navigation("Movie");
 
